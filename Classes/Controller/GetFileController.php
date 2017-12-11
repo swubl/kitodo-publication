@@ -100,6 +100,8 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
                 $attachment = $piVars['attachment'];
 
+                $this->accessControl($qid,$attachment);
+
                 if (is_numeric($piVars['qid'])) {
 
                     // qid is local uid
@@ -122,7 +124,35 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
                 } else {
 
-                    $path = rtrim('http://' . $fedoraHost, "/") . '/fedora/objects/' . $qid . '/datastreams/' . $attachment . '/content';
+                    $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+                    $remoteMetsXml = $remoteRepository->retrieve($qid);
+                    $remoteMets = new \EWW\Dpf\Helper\Mets($remoteMetsXml);
+
+                    $isRemoteFile = FALSE;
+                    foreach ($remoteMets->getFiles() as $file) {
+                        if ($file['id'] == $attachment) {
+                            $isRemoteFile = TRUE;
+                            break;
+                        }
+                    }
+
+                    if ($isRemoteFile) {
+                        $path = rtrim('http://' . $fedoraHost,
+                                "/") . '/fedora/objects/' . $qid . '/datastreams/' . $attachment . '/content';
+                    } else {
+                        $document = $this->documentRepository->findOneByObjectIdentifier($piVars['qid']);
+                        $files = $document->getCurrentFileData();
+
+                        foreach ($files['download'] as $id => $file) {
+
+                            if ($file['id'] == $attachment) {
+
+                                $path = $file['path'];
+                                $contentType = $file['type'];
+                                break;
+                            }
+                        }
+                    }
 
                 }
 
@@ -203,12 +233,18 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
         }
 
         if (!$contentDispFlag) {
-            header('Content-Disposition: attachment');
+            if ($file['title']) {
+                $filename = 'filename="' . $file['title'] . '"';
+                header('Content-Disposition: attachment; '.$filename);
+            }  else {
+                header('Content-Disposition: attachment');
+            }
         }
 
         if (!$contentTypeFlag) {
             header('Content-Type: ' . $contentType);
         }
+
 
         if ($stream = fopen($path, 'r')) {
 
@@ -268,6 +304,80 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
         $metsXml = $exporter->getMetsData();
 
         return $metsXml;
+    }
+
+    protected function accessControl($qid,$attachment)
+    {
+        $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $remoteMetsXml = $remoteRepository->retrieve($qid);
+        $remoteMets = new \EWW\Dpf\Helper\Mets($remoteMetsXml);
+
+        if (is_numeric($qid)) {
+            $document = $this->documentRepository->findByUid($qid);
+        } else {
+            $document = $this->documentRepository->findOneByObjectIdentifier($qid);
+        }
+        if ($document) {
+            $exporter = new \EWW\Dpf\Services\MetsExporter();
+            $fileData = $document->getFileData();
+            $exporter->setFileData($fileData);
+            $mods = new \EWW\Dpf\Helper\Mods($document->getXmlData());
+            $exporter->setMods($mods->getModsXml());
+            $exporter->setSlubInfo($document->getSlubInfoData());
+            $exporter->setObjId($document->getObjectIdentifier());
+            $exporter->buildMets();
+            $localMetsXml = $exporter->getMetsData();
+            $localMets = new \EWW\Dpf\Helper\Mets($localMetsXml);
+        }
+
+        $filePosition = "local";
+        if (is_numeric($qid)) {
+            $filePosition = "local";
+        } else {
+            foreach ($remoteMets->getFiles() as $file) {
+                if ($file['id'] == $attachment) {
+                    $filePosition = "remote";
+                    break;
+                }
+            }
+        }
+
+        $metsXml = "";
+        switch ($filePosition) {
+
+            case "local":
+                $metsXml = $localMetsXml;
+                break;
+            case "remote";
+                $metsXml = $remoteMetsXml;
+                break;
+
+            default:
+                throw new \TYPO3\CMS\Core\Error\Http\ForbiddenException();
+                break;
+
+        }
+
+        $mets = new \EWW\Dpf\Helper\Mets($metsXml);
+        $files = array();
+        foreach ($mets->getFiles() as $file) {
+            $files[$file['id']] = $file;
+        }
+
+
+        $mods = $localMets->getMods();
+
+        $accessNode = $mods->getModsXpath()->query('/mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]');
+
+        if ($accessNode->length == 0) {
+            $accessNode = $mods->getModsXpath()->query('/mods:mods/mods:accessCondition[@type=\"restriction on access\"][@displayLabel=\"Zugriff\"]');
+        }
+        $accessValue = $accessNode->item(0)->nodeValue;
+
+        if ($accessValue != "uneingeschränkter Zugriff") {
+        // if (!$files[$attachment]['download']) {
+            throw new \TYPO3\CMS\Core\Error\Http\ForbiddenException();
+        }
     }
 }
 
