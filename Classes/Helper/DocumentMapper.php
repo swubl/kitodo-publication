@@ -293,7 +293,7 @@ class DocumentMapper
         if ($documentForm->getDocumentUid()) {
             $document = $this->documentRepository->findByUid($documentForm->getDocumentUid());
         } else {
-            $document = $this->objectManager->get('\EWW\Dpf\Domain\Model\Document');
+            $document = $this->objectManager->get('EWW\Dpf\Domain\Model\Document');
         }
 
         $processNumber = $document->getProcessNumber();

@@ -159,8 +159,8 @@ class AjaxDocumentFormController extends \EWW\Dpf\Controller\AbstractController
         if (!empty($qucosaId)) {
             $urn = $urnService->getUrn($qucosaId);
         } else {
-            $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-            $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+            $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+            $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
             $documentTransferManager->setRemoteRepository($remoteRepository);
 
             $qucosaId = $documentTransferManager->getNextDocumentId();

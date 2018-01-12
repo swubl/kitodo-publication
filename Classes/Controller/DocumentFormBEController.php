@@ -43,7 +43,7 @@ class DocumentFormBEController extends AbstractDocumentFormController
 
         $document = $this->documentRepository->findByUid($documentData['documentUid']);
 
-        $elasticsearchRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\ElasticsearchRepository');
+        $elasticsearchRepository = $this->objectManager->get('EWW\Dpf\Services\Transfer\ElasticsearchRepository');
         // send document to index
         $elasticsearchRepository->delete($document, "");
 

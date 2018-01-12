@@ -144,7 +144,7 @@ abstract class AbstractDocumentFormController extends \TYPO3\CMS\Extbase\Mvc\Con
         } elseif (array_key_exists('documentType', $requestArguments)) {
             $docTypeUid   = $this->request->getArgument('documentType');
             $documentType = $this->documentTypeRepository->findByUid($docTypeUid);
-            $document     = $this->objectManager->get('\EWW\Dpf\Domain\Model\Document');
+            $document     = $this->objectManager->get('EWW\Dpf\Domain\Model\Document');
             $document->setDocumentType($documentType);
             $mapper  = $this->objectManager->get('EWW\Dpf\Helper\DocumentMapper');
             $docForm = $mapper->getDocumentForm($document);
@@ -230,7 +230,7 @@ abstract class AbstractDocumentFormController extends \TYPO3\CMS\Extbase\Mvc\Con
             }
         }
 
-        $notifier = $this->objectManager->get('\EWW\Dpf\Services\Email\Notifier');
+        $notifier = $this->objectManager->get('EWW\Dpf\Services\Email\Notifier');
 
         $notifier->sendNewDocumentNotification($newDocument);
 
@@ -238,7 +238,7 @@ abstract class AbstractDocumentFormController extends \TYPO3\CMS\Extbase\Mvc\Con
 
         if (array_key_exists('savecontinue', $requestArguments)) {
 
-            $tmpDocument = $this->objectManager->get('\EWW\Dpf\Domain\Model\Document');
+            $tmpDocument = $this->objectManager->get('EWW\Dpf\Domain\Model\Document');
 
             $tmpDocument->setTitle($newDocument->getTitle());
             $tmpDocument->setAuthors($newDocument->getAuthors());
@@ -351,7 +351,7 @@ abstract class AbstractDocumentFormController extends \TYPO3\CMS\Extbase\Mvc\Con
         $elasticsearchMapper = $this->objectManager->get('EWW\Dpf\Helper\ElasticsearchMapper');
         $json                = $elasticsearchMapper->getElasticsearchJson($updateDocument);
 
-        $elasticsearchRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\ElasticsearchRepository');
+        $elasticsearchRepository = $this->objectManager->get('EWW\Dpf\Services\Transfer\ElasticsearchRepository');
         // send document to index
         $elasticsearchRepository->add($updateDocument, $json);
 

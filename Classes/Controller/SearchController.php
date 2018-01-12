@@ -188,8 +188,8 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
      */
     public function importAction($documentObjectIdentifier, $objectState)
     {
-        $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-        $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+        $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
         $args[] = $documentObjectIdentifier;
@@ -227,7 +227,7 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
         $document = $this->documentRepository->findByObjectIdentifier($documentObjectIdentifier);
 
         if (is_a($document, '\EWW\Dpf\Domain\Model\Document')) {
-            $elasticsearchRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\ElasticsearchRepository');
+            $elasticsearchRepository = $this->objectManager->get('EWW\Dpf\Services\Transfer\ElasticsearchRepository');
             $elasticsearchMapper     = $this->objectManager->get('EWW\Dpf\Helper\ElasticsearchMapper');
             $json                    = $elasticsearchMapper->getElasticsearchJson($document);
             // send document to index

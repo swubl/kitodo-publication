@@ -152,7 +152,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     public function discardAction(\EWW\Dpf\Domain\Model\Document $document)
     {
         // remove document from local index
-        $elasticsearchRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\ElasticsearchRepository');
+        $elasticsearchRepository = $this->objectManager->get('EWW\Dpf\Services\Transfer\ElasticsearchRepository');
         // send document to index
         $elasticsearchRepository->delete($document, "");
 
@@ -187,7 +187,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
         $this->addFlashMessage($message, '', \TYPO3\CMS\Core\Messaging\AbstractMessage::OK);
 
-        $newDocument = $this->objectManager->get('\EWW\Dpf\Domain\Model\Document');
+        $newDocument = $this->objectManager->get('EWW\Dpf\Domain\Model\Document');
 
         $newDocument->setTitle($document->getTitle());
         $newDocument->setAuthors($document->getAuthors());
@@ -208,7 +208,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
         $this->documentRepository->add($newDocument);
 
-        $elasticsearchRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\ElasticsearchRepository');
+        $elasticsearchRepository = $this->objectManager->get('EWW\Dpf\Services\Transfer\ElasticsearchRepository');
 
         $this->persistenceManager->persistAll();
         // send document to index
@@ -248,8 +248,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             $qucosaId = $document->getReservedObjectIdentifier();
         }
         if (empty($qucosaId)) {
-            $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-            $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+            $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+            $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
             $documentTransferManager->setRemoteRepository($remoteRepository);
             $qucosaId = $documentTransferManager->getNextDocumentId();
             $document->setReservedObjectIdentifier($qucosaId);
@@ -263,8 +263,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             $document->setXmlData($mods->getModsXml());
         }
 
-        $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-        $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+        $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
         $objectIdentifier = $document->getObjectIdentifier();
@@ -276,7 +276,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             if ($documentTransferManager->ingest($document)) {
                 $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.success';
                 $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-                $notifier = $this->objectManager->get('\EWW\Dpf\Services\Email\Notifier');
+                $notifier = $this->objectManager->get('EWW\Dpf\Services\Email\Notifier');
                 $notifier->sendIngestNotification($document);
             } else {
                 $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.failure';
@@ -322,8 +322,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     public function restoreAction(\EWW\Dpf\Domain\Model\Document $document)
     {
 
-        $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-        $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+        $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
         if ($documentTransferManager->delete($document, "inactivate")) {
@@ -359,8 +359,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     public function deleteAction(\EWW\Dpf\Domain\Model\Document $document)
     {
 
-        $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-        $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+        $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
         if ($documentTransferManager->delete($document, "")) {
@@ -396,8 +396,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     public function activateAction(\EWW\Dpf\Domain\Model\Document $document)
     {
 
-        $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-        $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+        $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
         if ($documentTransferManager->delete($document, "revert")) {
@@ -433,8 +433,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     public function inactivateAction(\EWW\Dpf\Domain\Model\Document $document)
     {
 
-        $documentTransferManager = $this->objectManager->get('\EWW\Dpf\Services\Transfer\DocumentTransferManager');
-        $remoteRepository        = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+        $documentTransferManager = $this->objectManager->get('EWW\Dpf\Services\Transfer\DocumentTransferManager');
+        $remoteRepository        = $this->objectManager->get('EWW\Dpf\Services\Transfer\FedoraRepository');
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
         if ($documentTransferManager->delete($document, "inactivate")) {
