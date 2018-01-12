@@ -57,6 +57,7 @@ return array(
             'config'  => array(
                 //'readOnly' => 1,
                 'type'                => 'select',
+                'renderType'          => 'selectSingle',
                 'foreign_table'       => 'sys_language',
                 'foreign_table_where' => 'ORDER BY sys_language.title',
                 'items'               => array(
@@ -72,6 +73,7 @@ return array(
             'config'      => array(
                 //'readOnly' => 1,
                 'type'                => 'select',
+                'renderType'          => 'selectSingle',
                 'items'               => array(
                     array('', 0),
                 ),
@@ -189,6 +191,7 @@ return array(
             'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.data_type',
             'config'    => array(
                 'type'     => 'select',
+                'renderType' => 'selectSingle',
                 'items'    => array(
                     array('', ''),
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.data_type.regexp', \EWW\Dpf\Domain\Model\MetadataObject::INPUT_DATA_TYPE_REGEXP),
@@ -242,6 +245,7 @@ return array(
             'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_field',
             'config'    => array(
                 'type'     => 'select',
+                'renderType' => 'selectSingle',
                 'items'    => array(
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_type.input', \EWW\Dpf\Domain\Model\MetadataObject::input),
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_type.textarea', \EWW\Dpf\Domain\Model\MetadataObject::textarea),
@@ -259,6 +263,7 @@ return array(
             'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_option_list',
             'config'  => array(
                 'type'                => 'select',
+                'renderType'          => 'selectSingle',
                 'items'               => array(
                     array('', 0),
                 ),
@@ -284,6 +289,7 @@ return array(
             'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.fill_out_service',
             'config'    => array(
                 'type'     => 'select',
+                'renderType' => 'selectSingle',
                 'items'    => array(
                     array('', 0),
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.fill_out_service.urn', \EWW\Dpf\Domain\Model\MetadataObject::FILL_OUT_SERVICE_URN),
