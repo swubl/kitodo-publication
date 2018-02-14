@@ -79,6 +79,10 @@ $(document).ready(function() {
     jQuery(".tx-dpf").on("click", ".add_field", addField);
     jQuery(".tx-dpf").on("click", ".fill_out_service_urn", fillOutServiceUrn);
     jQuery(".tx-dpf").on("keyup", "input.urn", buttonFillOutServiceUrn);
+
+    jQuery(".tx-dpf").on("click", ".form-licence input", setLicenceLinkedField);
+
+
     //jQuery(window).on("scroll", "", continuousScroll);
     jQuery(".tx-dpf").on("click", "#next", continuousScroll);
     // jQuery(".form-submit").on("click","#save",
@@ -486,4 +490,15 @@ function addRemoveFileButton() {
         evt.preventDefault();
         $(this).siblings('.input_file_upload').val('');
     })
+}
+
+var setLicenceLinkedField = function(event) {
+        var fieldUid = jQuery(event.target).attr('data-field');
+        var fieldIndex = jQuery(event.target).attr('data-index');
+        var groupUid = jQuery(event.target).attr('data-group');
+        var groupIndex = jQuery(event.target).attr('data-groupindex');
+        var linkedFieldUid = jQuery(event.target).data('linkedfield');
+        var linkedValue = jQuery(event.target).data('linkedvalue');
+        var linkedField = jQuery('[data-field="' + linkedFieldUid + '"][data-index="' + fieldIndex + '"][data-group="' + groupUid + '"][data-groupindex="' + groupIndex + '"]');
+        linkedField.val(linkedValue);
 }
