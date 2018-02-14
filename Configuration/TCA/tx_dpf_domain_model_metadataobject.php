@@ -39,12 +39,13 @@ return array(
         ),
         'searchFields'             => 'name,display_name,max_iteration,mandatory,mapping,mods_extension,input_field,',
         'iconfile'                 => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('dpf') . 'Resources/Public/Icons/tx_dpf_domain_model_metadataobject.gif',
+        'requestUpdate' = 'fill_out_service',
     ),
     'interface' => array(
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, default_value, backend_only, consent',
+        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, default_value, backend_only, consent',
     ),
     'types'     => array(
-        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, default_value, backend_only, consent, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, default_value, backend_only, consent, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'palettes'  => array(
         '1' => array('showitem' => ''),
@@ -293,10 +294,21 @@ return array(
                 'items'    => array(
                     array('', 0),
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.fill_out_service.urn', \EWW\Dpf\Domain\Model\MetadataObject::FILL_OUT_SERVICE_URN),
+                    array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.fill_out_service.gnd', \EWW\Dpf\Domain\Model\MetadataObject::FILL_OUT_SERVICE_GND),
                 ),
                 'size'     => 1,
                 'maxitems' => 1,
                 'eval'     => '',
+            ),
+        ),
+        'gnd_field_uid' => array(
+            'display_cond' => 'FIELD:fill_out_service:=:GND',
+            'exclude'   => 0,
+            'label' => 'GND Nr Feld',
+            'config'  => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
             ),
         ),
         'metadatagroup'     => array(

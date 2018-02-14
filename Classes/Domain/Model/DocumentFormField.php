@@ -35,6 +35,8 @@ class DocumentFormField extends AbstractFormElement
 
     protected $dataType;
 
+    protected $gndFieldUid;
+
     /**
      * consent
      *
@@ -183,5 +185,13 @@ class DocumentFormField extends AbstractFormElement
     public function setDataType($dataType)
     {
         $this->dataType = $dataType;
+    }
+
+    public function getGndFieldUid() {
+        return $this->gndFieldUid;
+    }
+
+    public function setGndFieldUid($fieldId) {
+        $this->gndFieldUid = $fieldId;
     }
 }
