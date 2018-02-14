@@ -98,6 +98,26 @@
 }
 
 
+.ui-autocomplete-loading {
+    background: white url("../images/ui-anim_basic_16x16.gif") right center no-repeat;
+}
+
+.gnd-autocomplete {
+    background-color: white;
+}
+
+.gnd-autocomplete:hover {
+    background-color: #ebebeb;
+}
+
+.gnd-type {
+    font-size: 11px;
+}
+
+.gnd-value {
+    display: block;
+}
+
 /* -- form setup ------------------------------------------------------------------------- */
 
 .tx-dpf .form-container {

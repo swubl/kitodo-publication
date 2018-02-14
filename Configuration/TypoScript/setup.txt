@@ -129,7 +129,6 @@ page.includeJSFooter.tx_dpf_moment = EXT:dpf/Resources/Public/JavaScript/moment-
 page.includeJSFooter.tx_dpf_bootstrap = EXT:dpf/Resources/Public/JavaScript/bootstrap.min.js
 page.includeJSFooter.tx_dpf_bootstrap_datepicker = EXT:dpf/Resources/Public/JavaScript/bootstrap-datetimepicker.min.js
 page.includeJSFooter.tx_dpf_qucosa = EXT:dpf/Resources/Public/JavaScript/qucosa.js
-#page.includeJSFooter.tx_dpf_qucosa = EXT:dpf/Resources/Public/JavaScript/gnd.js
 
 
 #Define ajax page type

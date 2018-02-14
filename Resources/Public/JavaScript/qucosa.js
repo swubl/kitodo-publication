@@ -94,6 +94,10 @@ $(document).ready(function() {
     }
 
     addRemoveFileButton();
+
+    gnd = jQuery('.gnd');
+
+    setGndAutocomplete(gnd.data("field"), gnd.data("groupindex"));
     
 });
 var validateFormAndSave = function() {
@@ -302,6 +306,12 @@ var addGroup = function() {
         buttonFillOutServiceUrn();
         datepicker();
         addRemoveFileButton();
+
+        // gnd autocomplete for new groups
+        gndField = jQuery(group).find('.gnd');
+        if (gndField.length != 0) {
+            setGndAutocomplete(gndField.data('field'),gndField.data('groupindex'));
+        }
     });
     return false;
 }
@@ -322,6 +332,12 @@ var addField = function() {
         }).insertBefore(addButton).fadeIn();
         buttonFillOutServiceUrn();
         datepicker();
+
+        // gnd autocomplete for new fields
+        gndField = jQuery(group).find('.gnd');
+        if (gndField.length != 0) {
+            setGndAutocomplete(gndField.data('field'),gndField.data('groupindex'));
+        }
         //  var height =jQuery('input[data-field="'+dataField+'"][data-index="'+fieldIndex+'"]').last().outerHeight(true)
         // jQuery('html, body').animate({
         //   scrollTop: element.offset().top - height
@@ -486,4 +502,32 @@ function addRemoveFileButton() {
         evt.preventDefault();
         $(this).siblings('.input_file_upload').val('');
     })
+}
+
+function setGndAutocomplete(fieldId, groupIndex) {
+    // GND autocomplete
+    $('.gnd[data-field="' + fieldId + '"][data-groupindex="' + groupIndex + '"]').autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "?type=427590&tx_dpf_gndajax%5Baction%5D=search&tx_dpf_gndajax%5Bcontroller%5D=Gnd",
+                data: {
+                    "tx_dpf_gndajax[search]": request.term
+                },
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+            gndFieldId = jQuery(event.target).data('gndfield');
+            linkedGroupIndex = jQuery(event.target).data('groupindex');
+
+            $('input[data-field="' + gndFieldId + '"][data-groupindex="' + linkedGroupIndex + '"]').val(ui.item.gnd);
+        }
+    }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+            .append( "<div class='gnd-autocomplete'><span class='gnd-type'>" + item.typ + "</span><span class='gnd-value'>" + item.value + "</span></div>" )
+            .appendTo( ul );
+    };
 }
