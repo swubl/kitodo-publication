@@ -509,7 +509,7 @@ function setGndAutocomplete(fieldId, groupIndex) {
     $('.gnd[data-field="' + fieldId + '"][data-groupindex="' + groupIndex + '"]').autocomplete({
         source: function (request, response) {
             $.ajax({
-                url: "?type=427590&tx_dpf_gndajax%5Baction%5D=search&tx_dpf_gndajax%5Bcontroller%5D=Gnd",
+                url: window.location.pathname + "?type=427590&tx_dpf_gndajax%5Baction%5D=search&tx_dpf_gndajax%5Bcontroller%5D=Gnd",
                 data: {
                     "tx_dpf_gndajax[search]": request.term
                 },
