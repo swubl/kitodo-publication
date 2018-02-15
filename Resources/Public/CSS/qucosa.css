@@ -277,6 +277,37 @@
     margin-left: 10px;
 }
 
+.form-licence {
+    margin-bottom: 10px;
+}
+
+.form-licence label input {
+    width: auto !important;
+    border: none;
+    background: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 18px;
+}
+
+.tx-dpf .form-licence label {
+    border: none;
+    background: none;
+    box-shadow: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 18px;
+}
+
+.tx-dpf .form-licence span {
+    white-space: pre-line;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.tx-dpf .form-licence label span a {
+    display: inline-block;
+}
 
 /* -- error handling -------------------------------------------------------------------- */
 
