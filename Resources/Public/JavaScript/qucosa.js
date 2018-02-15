@@ -79,9 +79,7 @@ $(document).ready(function() {
     jQuery(".tx-dpf").on("click", ".add_field", addField);
     jQuery(".tx-dpf").on("click", ".fill_out_service_urn", fillOutServiceUrn);
     jQuery(".tx-dpf").on("keyup", "input.urn", buttonFillOutServiceUrn);
-
-    jQuery(".tx-dpf").on("click", ".form-licence input", setLicenceLinkedField);
-
+    jQuery(".tx-dpf").on("change", ".form-licence input", setLicenceLinkedField);
 
     //jQuery(window).on("scroll", "", continuousScroll);
     jQuery(".tx-dpf").on("click", "#next", continuousScroll);
