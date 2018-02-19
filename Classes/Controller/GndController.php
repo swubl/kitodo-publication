@@ -53,7 +53,11 @@ class GndController extends \EWW\Dpf\Controller\AbstractController
             $i++;
         }
 
-        echo json_encode($listArray);
+        if (empty($listArray)) {
+            echo json_encode(['value' => 'Keine Treffer gefunden!']);
+        } else {
+            echo json_encode($listArray);
+        }
 
         return '';
     }

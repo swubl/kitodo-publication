@@ -96,8 +96,9 @@ $(document).ready(function() {
     addRemoveFileButton();
 
     gnd = jQuery('.gnd');
-
-    setGndAutocomplete(gnd.data("field"), gnd.data("groupindex"));
+    if(gnd.length > 0) {
+        setGndAutocomplete(gnd.data("field"), gnd.data("groupindex"));
+    }
     
 });
 var validateFormAndSave = function() {
