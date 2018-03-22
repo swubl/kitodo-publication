@@ -482,7 +482,7 @@ class MetadataObject extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * @param string $linkedFieldNr
+     * @param string $linkedFieldUid
      */
     public function setLinkedFieldUid($linkedFieldUid)
     {
