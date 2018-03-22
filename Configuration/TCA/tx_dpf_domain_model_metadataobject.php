@@ -39,7 +39,7 @@ return array(
         ),
         'searchFields'             => 'name,display_name,max_iteration,mandatory,mapping,mods_extension,input_field,',
         'iconfile'                 => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('dpf') . 'Resources/Public/Icons/tx_dpf_domain_model_metadataobject.gif',
-        'requestUpdate' = 'fill_out_service',
+        'requestUpdate' => 'fill_out_service',
     ),
     'interface' => array(
         'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, default_value, backend_only, consent',
