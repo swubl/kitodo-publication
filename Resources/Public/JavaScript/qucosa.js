@@ -507,15 +507,27 @@ function addRemoveFileButton() {
 
 function setGndAutocomplete(fieldId, groupIndex) {
     // GND autocomplete
+    var ajaxURL = $('.gnd[data-field="' + fieldId + '"][data-groupindex="' + groupIndex + '"]').attr('data-ajax');
+
+    // Get the name of the parameter array (tx_dpf_...),
+    // the name depends on whether the call is from the frontend or the backend
+    var res = ajaxURL.match(/(tx_dpf\w+?)%/);
+    var paramName = "tx_dpf_qucosaform[search]";
+    if (res && res[1]) {
+        paramName = res[1]+"[search]";
+    }
+
     $('.gnd[data-field="' + fieldId + '"][data-groupindex="' + groupIndex + '"]').autocomplete({
         source: function (request, response) {
+            var requestData = {};
+            requestData[paramName] = request.term;
             $.ajax({
-                url: window.location.pathname + "?type=427590&tx_dpf_gndajax%5Baction%5D=search&tx_dpf_gndajax%5Bcontroller%5D=Gnd",
-                data: {
-                    "tx_dpf_gndajax[search]": request.term
-                },
+                type: 'POST',
+                url: ajaxURL,
+                data: requestData,
+                dataType: 'json',
                 success: function (data) {
-                    response(data);
+                   response(data);
                 }
             });
         },

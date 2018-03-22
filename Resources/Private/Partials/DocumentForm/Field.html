@@ -46,7 +46,7 @@
                     <f:form.textfield id="inp_{fieldItem.uid}"
                         property="metadata.{formPageUid}-{formGroupUid}-{groupIndex}-{fieldItem.uid}-{fieldIndex}"
                         value="{fieldItem.value}" class="input-field form-control {fieldItem.fillOutService}"
-                        additionalAttributes="{data-gndfield: fieldItem.gndFieldUid,data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"/>
+                        additionalAttributes="{data-ajax: \"{f:uri.action(action:'search',controller:'Gnd',pageType:427590)}\" data-gndfield: fieldItem.gndFieldUid,data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"/>
                 </f:then>
                 <f:else>
                     <f:form.textfield id="inp_{fieldItem.uid}"

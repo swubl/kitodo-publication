@@ -70,7 +70,7 @@ search_page {
 		admPanel = 0
 	}
 
-	10 < tt_content.list.20.dpf_gndajax
+	10 < tt_content.list.20.dpf_qucosaform
 }
 
 # Actions, only allowed for developers and localhost

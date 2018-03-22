@@ -71,17 +71,6 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
     )
 );
 
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'EWW.' . $_EXTKEY,
-    'GndAjax',
-    array(
-        'Gnd'     => 'search',
-    ),
-    // non-cacheable actions
-    array(
-        'Gnd'     => 'search',
-    )
-);
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPItoST43($_EXTKEY, 'Classes/Plugins/MetaTags/MetaTags.php', '_metatags', 'list_type', true);
 $overrideSetup = 'plugin.tx_dpf_metatags.userFunc = EWW\Dpf\Plugins\MetaTags\MetaTags->main';
