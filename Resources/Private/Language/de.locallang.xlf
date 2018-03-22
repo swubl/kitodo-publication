@@ -219,7 +219,7 @@
 		</trans-unit>
 		<trans-unit id="form_licence.linktext">
             <source>Licence information</source>
-            <targetLizensinformationen></target>
+            <target>Lizenzinformationen></target>
         </trans-unit>
 		<trans-unit id="manager.activate" approved="yes">
 			<source>activate</source>
