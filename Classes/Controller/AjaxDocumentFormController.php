@@ -107,7 +107,7 @@ class AjaxDocumentFormController extends \EWW\Dpf\Controller\AbstractController
         $fieldItem->setValidation($field->getValidation());
         $fieldItem->setDataType($field->getDataType());
         $fieldItem->setGndFieldUid($field->getGndFieldUid());
-        $field->setLinkedFieldUid($object->getLinkedFieldUid());
+        $fieldItem->setLinkedFieldUid($field->getLinkedFieldUid());
         $fieldItem->setValue("", $field->getDefaultValue());
 
         $this->view->assign('formPageUid', $pageUid);
