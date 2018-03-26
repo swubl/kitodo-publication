@@ -97,7 +97,9 @@ $(document).ready(function() {
 
     gnd = jQuery('.gnd');
     if(gnd.length > 0) {
-        setGndAutocomplete(gnd.data("field"), gnd.data("groupindex"));
+        gnd.each(function() {
+            setGndAutocomplete(jQuery(this).data("field"),  jQuery(this).data("groupindex"));
+        });
     }
     
 });
