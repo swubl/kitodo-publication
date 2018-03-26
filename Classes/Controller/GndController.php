@@ -29,6 +29,8 @@ class GndController extends \EWW\Dpf\Controller\AbstractController
 
     protected $gndResolverUrl = 'Anfrage?suchfeld=pica.ppn&suchoptionen=pica.tbs%3D"s"+and+&suchwort=';
 
+    protected $baseGndValueUri = 'http://d-nb.info/gnd/';
+
     /**
      * @param string $search
      * @return array
@@ -46,9 +48,9 @@ class GndController extends \EWW\Dpf\Controller\AbstractController
             $listArray[$i]['ppn'] = $value->PPN;
             $listArray[$i]['typ'] = $value->Typ;
             if ($value->GNDNr) {
-                $listArray[$i]['gnd'] = $value->GNDNr;
+                $listArray[$i]['gnd'] = $this->baseGndValueUri.$value->GNDNr;
             } else {
-                $listArray[$i]['gnd'] = $this->gndAction($value->PPN);
+                $listArray[$i]['gnd'] = $this->baseGndValueUri.$this->gndAction($value->PPN);
             }
             $i++;
         }
