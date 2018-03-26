@@ -114,7 +114,7 @@
                                     />
                                 </f:else>
                               </f:if>
-                              <span>{optionItem} <a href="{optionKey}" target="_blank">{f:translate(key: 'form_licence.linktext')}</a></span>
+                              <span>{optionItem} <f:if condition="{optionKey} != '#'"><a href="{optionKey}" target="_blank">{f:translate(key: 'form_licence.linktext')}</a></f:if></span>
                           </label>
                     </div>
                 </f:if>
