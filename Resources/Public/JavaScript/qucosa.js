@@ -79,6 +79,8 @@ $(document).ready(function() {
     jQuery(".tx-dpf").on("click", ".add_field", addField);
     jQuery(".tx-dpf").on("click", ".fill_out_service_urn", fillOutServiceUrn);
     jQuery(".tx-dpf").on("keyup", "input.urn", buttonFillOutServiceUrn);
+    jQuery(".tx-dpf").on("change", ".form-licence input", setLicenceLinkedField);
+
     //jQuery(window).on("scroll", "", continuousScroll);
     jQuery(".tx-dpf").on("click", "#next", continuousScroll);
     // jQuery(".form-submit").on("click","#save",
@@ -505,6 +507,7 @@ function addRemoveFileButton() {
     })
 }
 
+
 function setGndAutocomplete(fieldId, groupIndex) {
     // GND autocomplete
     var ajaxURL = $('.gnd[data-field="' + fieldId + '"][data-groupindex="' + groupIndex + '"]').attr('data-ajax');
@@ -543,4 +546,15 @@ function setGndAutocomplete(fieldId, groupIndex) {
             .append( "<div class='gnd-autocomplete'><span class='gnd-type'>" + item.typ + "</span><span class='gnd-value'>" + item.value + "</span></div>" )
             .appendTo( ul );
     };
+}
+
+var setLicenceLinkedField = function(event) {
+        var fieldUid = jQuery(event.target).attr('data-field');
+        var fieldIndex = jQuery(event.target).attr('data-index');
+        var groupUid = jQuery(event.target).attr('data-group');
+        var groupIndex = jQuery(event.target).attr('data-groupindex');
+        var linkedFieldUid = jQuery(event.target).data('linkedfield');
+        var linkedValue = jQuery(event.target).data('linkedvalue');
+        var linkedField = jQuery('[data-field="' + linkedFieldUid + '"][data-index="' + fieldIndex + '"][data-group="' + groupUid + '"][data-groupindex="' + groupIndex + '"]');
+        linkedField.val(linkedValue);
 }

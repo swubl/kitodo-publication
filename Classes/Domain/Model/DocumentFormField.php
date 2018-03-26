@@ -37,6 +37,8 @@ class DocumentFormField extends AbstractFormElement
 
     protected $gndFieldUid;
 
+    protected $linkedFieldUid;
+
     /**
      * consent
      *
@@ -193,5 +195,13 @@ class DocumentFormField extends AbstractFormElement
 
     public function setGndFieldUid($fieldId) {
         $this->gndFieldUid = $fieldId;
+    }
+
+    public function getLinkedFieldUid() {
+        return $this->linkedFieldUid;
+    }
+
+    public function setLinkedFieldUid($fieldId) {
+        $this->linkedFieldUid = $fieldId;
     }
 }

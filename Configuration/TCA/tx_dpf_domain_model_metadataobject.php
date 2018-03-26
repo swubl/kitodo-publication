@@ -42,10 +42,10 @@ return array(
         'requestUpdate' => 'fill_out_service',
     ),
     'interface' => array(
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, default_value, backend_only, consent',
+        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, linked_field_uid, default_value, backend_only, consent',
     ),
     'types'     => array(
-        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, default_value, backend_only, consent, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, name, display_name, max_iteration, mandatory, data_type, validation, mapping, mods_extension, input_field, input_option_list, fill_out_service, gnd_field_uid, linked_field_uid, default_value, backend_only, consent, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'palettes'  => array(
         '1' => array('showitem' => ''),
@@ -253,6 +253,7 @@ return array(
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_type.select', \EWW\Dpf\Domain\Model\MetadataObject::select),
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_type.checkbox', \EWW\Dpf\Domain\Model\MetadataObject::checkbox),
                     array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_type.hidden', \EWW\Dpf\Domain\Model\MetadataObject::hidden),
+                    array('LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_metadataobject.input_type.licence', \EWW\Dpf\Domain\Model\MetadataObject::licence),
                 ),
                 'size'     => 1,
                 'maxitems' => 1,
@@ -305,6 +306,15 @@ return array(
             'display_cond' => 'FIELD:fill_out_service:=:GND',
             'exclude'   => 0,
             'label' => 'GND Nr Feld',
+            'config'  => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
+        ),
+        'linked_field_uid' => array(
+            'exclude'   => 0,
+            'label' => 'Linked field',
             'config'  => array(
                 'type' => 'input',
                 'size' => 30,

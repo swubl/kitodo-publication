@@ -68,6 +68,7 @@ class MetadataObject extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     const select   = 2;
     const checkbox = 3;
     const hidden   = 4;
+    const licence  = 5;
 
     const INPUT_DATA_TYPE_REGEXP = "REGEXP";
     const INPUT_DATA_TYPE_DATE   = "DATE";
@@ -107,6 +108,11 @@ class MetadataObject extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      */
     protected $gndFieldUid = '';
+
+    /**
+     * @var string
+     */
+    protected $linkedFieldUid = '';
 
     /**
      * backendOnly
@@ -486,6 +492,21 @@ class MetadataObject extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setGndFieldUid($gndFieldUid)
     {
         $this->gndFieldUid = $gndFieldUid;
+
+    /**
+     * @return string
+     */
+    public function getLinkedFieldUid()
+    {
+        return $this->linkedFieldUid;
+    }
+
+    /**
+     * @param string $linkedFieldUid
+     */
+    public function setLinkedFieldUid($linkedFieldUid)
+    {
+        $this->linkedFieldUid = $linkedFieldUid;
     }
 
 }
