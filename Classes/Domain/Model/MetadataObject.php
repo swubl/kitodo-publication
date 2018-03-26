@@ -492,6 +492,7 @@ class MetadataObject extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setGndFieldUid($gndFieldUid)
     {
         $this->gndFieldUid = $gndFieldUid;
+    }
 
     /**
      * @return string
