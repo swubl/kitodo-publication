@@ -185,6 +185,34 @@ class InputOptionList extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function getInputOptions()
     {
 
+        return $this->_getInputOptions(FALSE);
+    }
+
+
+    /**
+     * Returns the extended inputOptions, including the additional values
+     *
+     * @return array $extendedInputOptions
+     * @throws \Exception
+     */
+    public function getExtendedInputOptions()
+    {
+
+        return $this->_getInputOptions(TRUE);
+    }
+
+
+    /**
+     * Returns the inputOptions or extended inputOptions
+     *
+     * @param boolean $extended
+     *
+     * @return array $inputOptions
+     * @throws \Exception
+     */
+    protected function _getInputOptions($extended = FALSE)
+    {
+
         $values = explode("|", $this->getValueList());
         $labels = explode("|", $this->getValueLabelList());
 
@@ -192,11 +220,33 @@ class InputOptionList extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
             throw new \Exception('Invalid input option list configuration.');
         }
 
-        return array_combine($values, $labels);
+        $inputOptions = array_combine($values, $labels);
+
+        if (!$additional) {
+            return $inputOptions;
+        } else {
+            $additionalValueList = trim($this->getAdditionalValueList());
+            if (!empty($additionalValueList)) {
+                $additionalValues = explode("|", $this->getAdditionalValueList());
+            }
+
+            if (sizeof($additionalValues) != sizeof($values)) {
+                throw new \Exception('Invalid input option list configuration.');
+            }
+
+            $additionalInputOptions = array();
+            foreach (array_combine($values, $additionalValues) as $value => $additionalValue) {
+                $additionalInputOptions[$value]['label'] = $inputOptions[$value];
+                $additionalInputOptions[$value]['additionalValue'] = $additionalValue;
+            }
+            return $additionalInputOptions;
+        }
     }
+
 
     public function setL10nParent($l10nParent)
     {
+
         $this->l10nParent = $l10nParent;
     }
 

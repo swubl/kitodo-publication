@@ -499,7 +499,7 @@ var setLicenceLinkedField = function(event) {
         var linkedValue = jQuery(event.target).data('linkedvalue').trim();
         var linkedField = jQuery('[data-field="' + linkedFieldUid + '"][data-index="' + fieldIndex + '"][data-group="' + groupUid + '"][data-groupindex="' + groupIndex + '"]');
 
-        if (linkedValue.toLowerCase().indexOf("http")) {
+        if (linkedValue.toLowerCase().indexOf("http") === 0) {
             linkedField.val(linkedValue);
         } else {
             linkedField.val("");
