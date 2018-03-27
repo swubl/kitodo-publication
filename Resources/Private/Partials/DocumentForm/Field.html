@@ -124,7 +124,7 @@
                                     />
                                 </f:else>
                               </f:if>
-                              <span>{optionItem} <f:if condition="{eww:IsUrl(url:'{optionKey}')}"><a href="{optionKey}" target="_blank">{f:translate(key: 'form_licence.linktext')}</a></f:if></span>
+                              <span>{optionItem} <f:if condition="{eww:IsUrlString(url:'{optionKey}')}"><a href="{optionKey}" target="_blank">{f:translate(key: 'form_licence.linktext')}</a></f:if></span>
                           </label>
                     </div>
                 </f:if>
