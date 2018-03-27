@@ -556,7 +556,12 @@ var setLicenceLinkedField = function(event) {
         var groupUid = jQuery(event.target).attr('data-group');
         var groupIndex = jQuery(event.target).attr('data-groupindex');
         var linkedFieldUid = jQuery(event.target).data('linkedfield');
-        var linkedValue = jQuery(event.target).data('linkedvalue');
+        var linkedValue = jQuery(event.target).data('linkedvalue').trim();
         var linkedField = jQuery('[data-field="' + linkedFieldUid + '"][data-index="' + fieldIndex + '"][data-group="' + groupUid + '"][data-groupindex="' + groupIndex + '"]');
-        linkedField.val(linkedValue);
+
+        if (linkedValue.toLowerCase().indexOf("http")) {
+            linkedField.val(linkedValue);
+        } else {
+            linkedField.val("");
+        }
 }
