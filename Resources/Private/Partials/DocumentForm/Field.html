@@ -99,18 +99,18 @@
                                     <f:form.radio id="inp_{fieldItem.uid}_{optionItemIterator.index}_{formGroupUid}_{groupIndex}"
                                             property="metadata.{formPageUid}-{formGroupUid}-{groupIndex}-{fieldItem.uid}-{fieldIndex}"
                                             class="form-check-input input-field form-control {fieldItem.fillOutService}"
-                                            value="{optionKey}"
-                                            additionalAttributes="{data-linkedfield:fieldItem.linkedFieldUid,data-linkedvalue:optionItem, data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"
-                                            checked="{f:if(condition: '{fieldItem.value} == {optionKey}', then: 'checked', else: '')}"
+                                            value="{optionItem}"
+                                            additionalAttributes="{data-linkedfield:fieldItem.linkedFieldUid,data-linkedvalue:optionKey, data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"
+                                            checked="{f:if(condition: '{fieldItem.value} == {optionItem}', then: 'checked', else: '')}"
                                     />
                                 </f:then>
                                 <f:else>
                                     <f:form.radio id="inp_{fieldItem.uid}_{optionItemIterator.index}_{formGroupUid}_{groupIndex}"
                                             property="metadata.{formPageUid}-{formGroupUid}-{groupIndex}-{fieldItem.uid}-{fieldIndex}"
                                             class="form-check-input input-field form-control {fieldItem.fillOutService}"
-                                            value="{optionKey}"
+                                            value="{optionItem}"
                                             additionalAttributes="{data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"
-                                            checked="{f:if(condition: '{fieldItem.value} == {optionKey}', then: 'checked', else: '')}"
+                                            checked="{f:if(condition: '{fieldItem.value} == {optionItem}', then: 'checked', else: '')}"
                                     />
                                 </f:else>
                               </f:if>

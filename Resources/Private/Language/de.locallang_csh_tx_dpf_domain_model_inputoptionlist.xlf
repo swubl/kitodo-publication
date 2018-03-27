@@ -25,6 +25,10 @@
 			<source>valueList</source>
 			<target>Werteliste</target>
 		</trans-unit>
+		<trans-unit id="additional_value_list.description" approved="yes">
+            <source>additionalValueList</source>
+            <target>Zusätzliche Werteliste</target>
+        </trans-unit>
 		</body>
 	</file>
 </xliff>

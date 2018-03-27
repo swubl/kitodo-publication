@@ -48,6 +48,15 @@ class InputOptionList extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     protected $valueLabelList = '';
 
+
+    /**
+     * additionalValue
+     *
+     * @var string
+     */
+    protected $additionalValue = '';
+
+
     /**
      * defaultValue
      *
@@ -134,6 +143,26 @@ class InputOptionList extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setValueLabelList($valueLabelList)
     {
         $this->valueLabelList = $valueLabelList;
+    }
+
+    /**
+     * Returns the additionalValueList
+     *
+     * @return string $additionalValueList
+     */
+    public function getAdditionalValueList()
+    {
+        return $this->additionalValueList;
+    }
+
+    /**
+     * Sets the additionalValueList
+     *
+     * @return void
+     */
+    public function setAdditionalValueList($additionalValueList)
+    {
+        $this->additionalValueList = $additionalValueList;
     }
 
     /**
