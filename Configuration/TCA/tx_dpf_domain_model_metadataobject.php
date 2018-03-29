@@ -295,6 +295,8 @@ return array(
             ),
         ),
         'linked_field_uid' => array(
+            'displayCond' => 'FIELD:input_field:=:'.\EWW\Dpf\Domain\Model\MetadataObject::licence,
+            'exclude'   => 0,
             'exclude'   => 0,
             'label' => 'Linked field',
             'config'  => array(
