@@ -41,10 +41,10 @@ return array(
         'iconfile'                 => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('dpf') . 'Resources/Public/Icons/tx_dpf_domain_model_inputoptionlist.gif',
     ),
     'interface' => array(
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, value_list, additional_value_list, value_label_list, default_value',
+        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, value_list, value_label_list, default_value',
     ),
     'types'     => array(
-        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, name, display_name, value_list, additional_value_list, value_label_list, default_value, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, name, display_name, value_list, value_label_list, default_value, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'palettes'  => array(
         '1' => array('showitem' => ''),
@@ -168,17 +168,6 @@ return array(
             'exclude' => 1,
             'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_inputoptionlist.value_label_list',
             'config'  => array(
-                'type' => 'text',
-                'cols' => 20,
-                'rows' => 3,
-                'eval' => 'trim',
-            ),
-        ),
-        'additional_value_list'       => array(
-            'exclude'   => 1,
-            'l10n_mode' => 'exclude',
-            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_inputoptionlist.additional_value_list',
-            'config'    => array(
                 'type' => 'text',
                 'cols' => 20,
                 'rows' => 3,

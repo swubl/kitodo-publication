@@ -725,9 +725,6 @@ Date: ###DATE###
 		<trans-unit id="tx_dpf_domain_model_inputoptionlist.value_list">
 			<source>Value list</source>
 		</trans-unit>
-		<trans-unit id="tx_dpf_domain_model_inputoptionlist.additional_value_list">
-			<source>Additional value list</source>
-		</trans-unit>
 		<trans-unit id="tx_dpf_domain_model_metadatagroup">
 			<source>Metadata Group</source>
 		</trans-unit>

@@ -305,10 +305,6 @@
 			<source>Value list</source>
 			<target>Werteliste</target>
 		</trans-unit>
-		<trans-unit id="tx_dpf_domain_model_inputoptionlist.additional_value_list" approved="yes">
-			<source>Additional value list</source>
-			<target>Zusätzliche Werteliste</target>
-		</trans-unit>
 		<trans-unit id="tx_dpf_domain_model_metadatagroup" approved="yes">
 			<source>Metadata Group</source>
 			<target>Metadatengruppe</target>
