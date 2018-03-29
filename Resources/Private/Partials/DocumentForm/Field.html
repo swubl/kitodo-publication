@@ -100,7 +100,7 @@
         </f:case>
         <f:case value="5">
             <f:for each="{fieldItem.inputOptions}" as="optionItem" key="optionKey" iteration="optionItemIterator">
-                <f:if condition="{optionKey}">
+                <f:if condition="{optionItem}">
                     <div class="form-licence">
                           <label for="inp_{fieldItem.uid}_{optionItemIterator.index}_{formGroupUid}_{groupIndex}">
 
@@ -110,7 +110,7 @@
                                             property="metadata.{formPageUid}-{formGroupUid}-{groupIndex}-{fieldItem.uid}-{fieldIndex}"
                                             class="form-check-input input-field form-control {fieldItem.fillOutService}"
                                             value="{optionKey}"
-                                            additionalAttributes="{data-linkedfield:fieldItem.linkedFieldUid,data-linkedvalue:optionItem, data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"
+                                            additionalAttributes="{data-linkedfield:fieldItem.linkedFieldUid,data-linkedvalue:optionItem,data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"
                                             checked="{f:if(condition: '{fieldItem.value} == {optionKey}', then: 'checked', else: '')}"
                                     />
                                 </f:then>

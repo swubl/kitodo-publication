@@ -483,6 +483,7 @@ CREATE TABLE tx_dpf_domain_model_inputoptionlist (
   name varchar(255) DEFAULT '' NOT NULL,
   display_name varchar(255) DEFAULT '' NOT NULL,
   value_list text NOT NULL,
+  additional_value_list text NOT NULL,
   value_label_list text NOT NULL,
   default_value text NOT NULL,
 
