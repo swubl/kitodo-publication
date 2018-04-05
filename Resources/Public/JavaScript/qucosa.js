@@ -528,8 +528,29 @@ function setGndAutocomplete(fieldId, groupIndex) {
                 url: ajaxURL,
                 data: requestData,
                 dataType: 'json',
+                timeout: 10000,
                 success: function (data) {
                    response(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    var gndInputField = $('.gnd[data-field="' + fieldId + '"][data-groupindex="' + groupIndex + '"]');
+                    gndInputField.val("");
+                    gndFieldId = gndInputField.data('gndfield');
+                    linkedGroupIndex = gndInputField.data('groupindex');
+                    gndLinkedInputField = $('input[data-field="' + gndFieldId + '"][data-groupindex="' + linkedGroupIndex + '"]');
+                    gndLinkedInputField.val("");
+                    //alert('Keine Treffer gefunden.');
+                    jQuery('<div id="gnd-nothing-found" class="alert alert-warning" role="alert"><span class="glyphicon glyphicon glyphicon-fire pull-right"></span>' + form_error_msg_nothing_found + '</div>').insertBefore(gndInputField.closest('.form-container'));
+
+                    gndInputField.bind("keypress click", function(){
+                        jQuery("#gnd-nothing-found").remove();
+                    });
+
+                    gndLinkedInputField.bind("keypress click", function(){
+                        jQuery("#gnd-nothing-found").remove();
+                    });
+
+                    response([]);
                 }
             });
         },
