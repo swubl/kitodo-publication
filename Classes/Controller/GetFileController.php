@@ -84,6 +84,13 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
             case 'preview':
 
+                // Access to the preview is only allowed if the caller is logged in to the backend.
+                if (!(is_object($GLOBALS['TSFE']) && $GLOBALS['TSFE']->isBackendUserLoggedIn())) {
+                    $this->response->setStatus(403);
+                    return 'Access denied';
+                }
+
+
                 $document = $this->documentRepository->findByUid($piVars['qid']);
 
                 if ($document) {
@@ -100,6 +107,20 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
                 }
 
             case 'attachment':
+
+                if ($piVars['preview']) {
+                    // Access to the preview is only allowed if the caller is logged in to the backend.
+                    if (!(is_object($GLOBALS['TSFE']) && $GLOBALS['TSFE']->isBackendUserLoggedIn())) {
+                        $this->response->setStatus(403);
+                        return 'Access denied';
+                    }
+                }
+
+                if (!$this->isAttachmentAccessAllowed($piVars['qid'], $piVars['preview'] ) {
+                    $this->response->setStatus(403);
+                    return 'Access denied';
+                }
+
 
                 $qid = $piVars['qid'];
 
@@ -289,5 +310,33 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
             && in_array($action, $this->settings['allowedActions']);
         return !$allowed;
     }
+
+    private function isAttachmentAccessAllowed($qid, $preview)
+    {
+        $metsXml = '';
+
+        if($preview) {
+
+            $document = $this->documentRepository->findByUid($qid);
+            if ($document) {
+                $metsXml = $this->buildMetsXml($document);
+            }
+
+        } else {
+            $path = rtrim('http://' . $fedoraHost,"/").'/fedora/objects/'.$qid.'/methods/qucosa:SDef/getMETSDissemination?supplement=yes';
+            $metsXml = file_get_contents($path);
+        }
+
+        if ($metsXml) {
+
+
+        } else {
+            return FALSE;
+        }
+
+
+
+    }
+
 }
 
