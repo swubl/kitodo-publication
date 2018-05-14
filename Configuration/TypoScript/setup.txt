@@ -53,7 +53,28 @@ plugin.tx_dpf {
 			apiPid = {$plugin.tx_dpf.settings.apiPid}
 			landingPage = {$plugin.tx_dpf.settings.landingPage}
 			searchResultsPid = {$plugin.tx_dpf.settings.searchResultsPid}
-        }
+
+			accessRestriction {
+				# The Xpath expression for addressing the access condition.
+				xpath =
+
+				accessConditions {
+					10 {
+						# no access
+						value = no access
+						restricted = 1
+						errorPageUid =
+					}
+
+					20 {
+						# unrestricted access
+						value = unrestricted access
+						restricted = 0
+						errorPageUid =
+					}
+				}
+			}
+		}
 }
 // pi1 = GndAjax
 // PAGE object for Ajax call:
