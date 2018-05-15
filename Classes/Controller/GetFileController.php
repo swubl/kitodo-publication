@@ -355,8 +355,8 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
                     $accessConditionValue = $accessNode->item(0)->nodeValue;
                 }
 
-                if (is_array($this->settings['accessConditions'])) {
-                    foreach ($this->settings['accessConditions'] as $accessCondition) {
+                if (is_array($this->settings['accessRestriction']['accessConditions'])) {
+                    foreach ($this->settings['accessRestriction']['accessConditions'] as $accessCondition) {
                         if ($accessCondition['value'] === $accessConditionValue) {
                             if (array_key_exists('restricted', $accessCondition) && $accessCondition['restricted']) {
                                 $uriBuilder = $this->uriBuilder;
