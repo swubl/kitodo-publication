@@ -311,31 +311,53 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
         return !$allowed;
     }
 
-    private function isAttachmentAccessAllowed($qid, $preview)
+    /**
+     * @param string $qid
+     * @param array $piVars
+     *
+     * @return bool
+     */
+    private function isAttachmentAccessAllowed($qid, $piVars)
     {
         $metsXml = '';
 
-        if($preview) {
-
+        if(key_exists('preview', $piVars) && $piVars['preview']) {
             $document = $this->documentRepository->findByUid($qid);
             if ($document) {
                 $metsXml = $this->buildMetsXml($document);
             }
-
         } else {
-            $path = rtrim('http://' . $fedoraHost,"/").'/fedora/objects/'.$qid.'/methods/qucosa:SDef/getMETSDissemination?supplement=yes';
-            $metsXml = file_get_contents($path);
+            $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+            $metsXml = $remoteRepository->retrieve($qid);
         }
 
         if ($metsXml) {
+            $mets = new \EWW\Dpf\Helper\Mets($metsXml);
+            $mods = $mets->getMods();
+            $accessNode = $mods->getModsXpath()->query('/mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]');
+
+            if ($accessNode->length == 0) {
+                $accessNode = $mods->getModsXpath()->query('/mods:mods/mods:accessCondition[@type=\"restriction on access\"][@displayLabel=\"Zugriff\"]');
+            }
+            $accessValue = $accessNode->item(0)->nodeValue;
+
+            if ($accessValue == "nur interner Zugriff") {
+
+                $uriBuilder = $this->uriBuilder;
+                $uri = $uriBuilder
+                    ->setTargetPageUid(1)
+                    ->build();
+                $this->redirectToUri($uri, 0, 403);
+
+                return FALSE;
+                //throw new \TYPO3\CMS\Core\Error\Http\ForbiddenException();
+            }
 
 
-        } else {
-            return FALSE;
+            return TRUE;
         }
 
-
-
+        return FALSE;
     }
 
 }
