@@ -116,11 +116,13 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
                     }
                 }
 
-                if (!$this->isAttachmentAccessAllowed($piVars['qid'], $piVars['preview'] ) {
+                // ------------------------------
+                // Access restriction enforcement
+                // ------------------------------
+                if ($this->enforceAccessRestriction($piVars)) {
                     $this->response->setStatus(403);
                     return 'Access denied';
                 }
-
 
                 $qid = $piVars['qid'];
 
@@ -312,52 +314,70 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
     }
 
     /**
-     * @param string $qid
+     * Checks if access to the attachment is allowed.
+     * If not, the access is blocked and an error page called.
+     * If access has been blocked TRUE will be returned.
+     *
      * @param array $piVars
      *
      * @return bool
      */
-    private function isAttachmentAccessAllowed($qid, $piVars)
+    private function enforceAccessRestriction($piVars)
     {
-        $metsXml = '';
+        if (array_key_exists('accessRestriction', $this->settings)) {
 
-        if(key_exists('preview', $piVars) && $piVars['preview']) {
-            $document = $this->documentRepository->findByUid($qid);
-            if ($document) {
-                $metsXml = $this->buildMetsXml($document);
-            }
-        } else {
-            $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
-            $metsXml = $remoteRepository->retrieve($qid);
-        }
+            $metsXml = '';
 
-        if ($metsXml) {
-            $mets = new \EWW\Dpf\Helper\Mets($metsXml);
-            $mods = $mets->getMods();
-            $accessNode = $mods->getModsXpath()->query('/mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]');
-
-            if ($accessNode->length == 0) {
-                $accessNode = $mods->getModsXpath()->query('/mods:mods/mods:accessCondition[@type=\"restriction on access\"][@displayLabel=\"Zugriff\"]');
-            }
-            $accessValue = $accessNode->item(0)->nodeValue;
-
-            if ($accessValue == "nur interner Zugriff") {
-
-                $uriBuilder = $this->uriBuilder;
-                $uri = $uriBuilder
-                    ->setTargetPageUid(1)
-                    ->build();
-                $this->redirectToUri($uri, 0, 403);
-
-                return FALSE;
-                //throw new \TYPO3\CMS\Core\Error\Http\ForbiddenException();
+            if(key_exists('preview', $piVars) && $piVars['preview']) {
+                $document = $this->documentRepository->findByUid($piVars['qid']);
+                if ($document) {
+                    $metsXml = $this->buildMetsXml($document);
+                }
+            } else {
+                $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+                $metsXml = $remoteRepository->retrieve($piVars['qid']);
             }
 
+            if ($metsXml) {
+
+                $mets = new \EWW\Dpf\Helper\Mets($metsXml);
+                $mods = $mets->getMods();
+
+                if ($this->settings['accessRestriction']['xpath']) {
+                    $accessConditionXPath = $this->settings['accessRestriction']['xpath'];
+                } else {
+                    $accessConditionXPath = '/mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]';
+                }
+
+                $accessNode = $mods->getModsXpath()->query($accessConditionXPath);
+
+                if ($accessNode->length > 0) {
+                    $accessConditionValue = $accessNode->item(0)->nodeValue;
+                }
+
+                if (is_array($this->settings['accessConditions'])) {
+                    foreach ($this->settings['accessConditions'] as $accessCondition) {
+                        if ($accessCondition['value'] === $accessConditionValue) {
+                            if (array_key_exists('restricted', $accessCondition) && $accessCondition['restricted']) {
+                                $uriBuilder = $this->uriBuilder;
+                                $uri = $uriBuilder
+                                    ->setTargetPageUid($accessCondition['errorPageUid'])
+                                    ->build();
+                                $this->redirectToUri($uri, 0, 403);
+
+                                return TRUE;
+                            } else {
+                                return FALSE;
+                            }
+                        }
+                    }
+                }
+            }
 
             return TRUE;
+        } else {
+            return FALSE;
         }
-
-        return FALSE;
     }
 
 }
