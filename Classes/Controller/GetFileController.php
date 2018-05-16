@@ -84,13 +84,6 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
             case 'preview':
 
-                // Access to the preview is only allowed if the caller is logged in to the backend.
-                if (!(is_object($GLOBALS['TSFE']) && $GLOBALS['TSFE']->isBackendUserLoggedIn())) {
-                    $this->response->setStatus(403);
-                    return 'Access denied';
-                }
-
-
                 $document = $this->documentRepository->findByUid($piVars['qid']);
 
                 if ($document) {
@@ -108,20 +101,17 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
             case 'attachment':
 
-                if ($piVars['preview']) {
-                    // Access to the preview is only allowed if the caller is logged in to the backend.
-                    if (!(is_object($GLOBALS['TSFE']) && $GLOBALS['TSFE']->isBackendUserLoggedIn())) {
-                        $this->response->setStatus(403);
-                        return 'Access denied';
-                    }
-                }
-
                 // ------------------------------
                 // Access restriction enforcement
                 // ------------------------------
-                if ($this->enforceAccessRestriction($piVars)) {
-                    $this->response->setStatus(403);
-                    return 'Access denied';
+                if ($enforceResult = $this->enforceAccessRestriction($piVars)) {
+
+                    if ($enforceResult == "ACCESS_DENIED") {
+                        $this->response->setStatus(403);
+                        return 'Access denied';
+                    } else {
+                        $this->redirectToUri($enforceResult, 0, 403);
+                    }
                 }
 
                 $qid = $piVars['qid'];
@@ -315,12 +305,11 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
     /**
      * Checks if access to the attachment is allowed.
-     * If not, the access is blocked and an error page called.
-     * If access has been blocked TRUE will be returned.
+     * If not, an URI for an error page redirect or ACCESS_DENIED is returned.
      *
      * @param array $piVars
      *
-     * @return bool
+     * @return string
      */
     private function enforceAccessRestriction($piVars)
     {
@@ -329,10 +318,17 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
             $metsXml = '';
 
             if(key_exists('preview', $piVars) && $piVars['preview']) {
-                $document = $this->documentRepository->findByUid($piVars['qid']);
+
+                if (is_numeric($piVars['qid'])) {
+                    $document = $this->documentRepository->findOneByUid($piVars['qid']);
+                } else {
+                    $document = $this->documentRepository->findOneByObjectIdentifier($piVars['qid']);
+                }
+
                 if ($document) {
                     $metsXml = $this->buildMetsXml($document);
                 }
+
             } else {
                 $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
                 $metsXml = $remoteRepository->retrieve($piVars['qid']);
@@ -363,20 +359,19 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
                                 $uri = $uriBuilder
                                     ->setTargetPageUid($accessCondition['errorPageUid'])
                                     ->build();
-                                $this->redirectToUri($uri, 0, 403);
 
-                                return TRUE;
+                                return $uri;
                             } else {
-                                return FALSE;
+                                return NULL;
                             }
                         }
                     }
                 }
             }
 
-            return TRUE;
+            return "ACCESS_DENIED";
         } else {
-            return FALSE;
+            return NULL;
         }
     }
 
