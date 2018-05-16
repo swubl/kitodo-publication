@@ -307,6 +307,27 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
      * Checks if access to the attachment is allowed.
      * If not, an URI for an error page redirect or ACCESS_DENIED is returned.
      *
+     * Example for the TYPOSCRIPT configuration:
+     *
+     * plugin.tx_dpf.settings {
+     *   accessRestriction {
+     *     xpath = /mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]
+     *       accessConditions {
+     *         10 {
+     *           value = kein Zugriff (interne Archivierung)
+     *           restricted = 1
+     *           errorPageUid = 2150
+     *         }
+     *
+     *         20 {
+     *           value = uneingeschränkter Zugriff
+     *           restricted = 0
+     *           errorPageUid = 2150
+     *         }
+     *      }
+     *   }
+     * }
+     *
      * @param array $piVars
      *
      * @return string
