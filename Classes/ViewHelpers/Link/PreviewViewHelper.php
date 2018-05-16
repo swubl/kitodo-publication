@@ -92,7 +92,7 @@ class PreviewViewHelper extends AbstractBackendViewHelper
         // replace uid with URI to dpf API
         $previewMets = $cObj->typoLink_URL($conf);
 
-        $additionalGetVars = (($row['action']=='preview')? '&tx_dlf[preview]=1':'') . '&tx_dlf[id]=' . urlencode($previewMets) . '&no_cache=1';
+        $additionalGetVars = '&tx_dlf[id]=' . urlencode($previewMets) . '&no_cache=1';
         $title             = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('manager.tooltip.preview', 'dpf', $arguments = null);
         $icon              = '<a href="#" data-toggle="tooltip" class="' . $class . '" onclick="' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($pageUid, $this->backPath, '', '', '', $additionalGetVars)) . '" title="' . $title . '">' .
             $insideText . '</a>';

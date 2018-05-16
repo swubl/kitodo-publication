@@ -56,12 +56,6 @@ class DownloadTool extends \tx_dlf_plugin
         // Load current document.
         $this->loadDocument();
 
-        $dlfParameter = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_dlf');
-        $preview = 0;
-        if (is_array($dlfParameter) && key_exists('preview',$dlfParameter)) {
-            $preview = $dlfParameter['preview'];
-        }
-
         if ($this->doc === null || empty($this->conf['fileGrpDownload'])) {
 
             // Quit without doing anything if required variables are not set.
@@ -96,7 +90,7 @@ class DownloadTool extends \tx_dlf_plugin
                 $conf = array(
                     'useCacheHash'     => 0,
                     'parameter'        => $this->conf['apiPid'] . ' - piwik_download',
-                    'additionalParams' => '&tx_dpf[qid]=' . $this->doc->recordId . '&tx_dpf[action]=attachment' . '&tx_dpf[attachment]=' . $file['ID'] . (($preview==1? '&tx_dpf[preview]=1':'')),
+                    'additionalParams' => '&tx_dpf[qid]=' . $this->doc->recordId . '&tx_dpf[action]=attachment' . '&tx_dpf[attachment]=' . $file['ID'],
                     'forceAbsoluteUrl' => true,
                 );
 
