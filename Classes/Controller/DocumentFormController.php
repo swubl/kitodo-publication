@@ -49,7 +49,7 @@ class DocumentFormController extends AbstractDocumentFormController
 
         parent::createAction($newDocumentForm);
 
-        if (key_exists('afterDocSavedRedirectPage') && $this->settings['afterDocSavedRedirectPage']) {
+        if (key_exists('afterDocSavedRedirectPage',$this->settings) && $this->settings['afterDocSavedRedirectPage']) {
             $uri = $this->uriBuilder
                 ->setTargetPageUid($this->settings['afterDocSavedRedirectPage'])
                 ->build();
