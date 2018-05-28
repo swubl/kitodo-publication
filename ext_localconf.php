@@ -38,12 +38,14 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
         'DocumentForm'     => 'list,show,new,create,edit,update,delete,cancel',
         'AjaxDocumentForm' => 'group,fileGroup,field,deleteFile,primaryUpload,secondaryUpload,fillOut',
         'Gnd'              => 'search',
+        'Bk'               => 'search',
     ),
     // non-cacheable actions
     array(
         'DocumentForm'     => 'list,show,new,create,edit,update,delete,cancel,ajaxGroup,ajaxFileGroup,ajaxField',
         'AjaxDocumentForm' => 'group,fileGroup,field,deleteFile,primaryUpload,secondaryUpload,fillOut',
         'Gnd'              => 'search',
+        'Bk'               => 'search',
     )
 );
 
