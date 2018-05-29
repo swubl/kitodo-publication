@@ -31,15 +31,22 @@ class BkController extends \EWW\Dpf\Controller\AbstractController
      */
     public function searchAction($search) {
         $url = $this->gndHost . $this->searchUrl . $search . "?format=jsonld";
-        $content = file_get_contents($url);
-        $json = json_decode($content);
 
-        if (is_object($json)) {
-            if ($json->prefLabel) {
-                if ($json->prefLabel->de)
-                    echo $search ." ". $json->prefLabel->de;
+        $content = null;
+        $json = null;
+
+        $content = @file_get_contents($url);
+
+        if ($content) {
+            $json = json_decode($content);
+            if (is_object($json)) {
+                if ($json->prefLabel) {
+                    if ($json->prefLabel->de)
+                        echo $search ." ". $json->prefLabel->de;
+                }
             }
         }
+
         return '';
     }
 }
