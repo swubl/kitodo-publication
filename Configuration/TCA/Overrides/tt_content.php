@@ -84,3 +84,16 @@ $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['dpf_relatedl
     'dpf'
 );
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue('dpf_relatedlisttool', 'FILE:EXT:dpf/Classes/Plugins/RelatedListTool/flexform.xml');
+
+
+// Plugin "StatisticTool".
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist']['dpf_statistictool'] = 'layout,select_key,pages,recursive';
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['dpf_statistictool'] = 'pi_flexform';
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
+    array('LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:tt_content.dpf_statistictool',
+        'dpf_statistictool'),
+    'list_type',
+    'dpf'
+);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue('dpf_statistictool', 'FILE:EXT:dpf/Classes/Plugins/StatisticTool/flexform.xml');
