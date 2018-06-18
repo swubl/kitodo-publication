@@ -91,17 +91,25 @@ class StatisticTool extends \tx_dlf_plugin
         $statData = array();
         foreach ($statisticData as $item) {
             list($monthYear, $object, $count) = explode(' ', $item);
-            list($month, $year) = explode('-',trim($monthYear));
-            $statData[trim(intval($year))][trim(intval($month))][trim(strtolower($object))] = trim(intval($count));
+            // list($month, $year) = explode('-',trim($monthYear));
+            //$statData[trim(intval($year))][trim(intval($month))][trim(strtolower($object))] = trim(intval($count));
+            $statData[$monthYear][trim(strtolower($object))] = trim(intval($count));
         }
 
-        if (is_array($statData) && $statData) {
+        $statData = array_slice($statData,0,12);
+        foreach ($statData as $key => $value) {
+            list($month, $year) = explode('-',trim($key));
+            $data[trim(intval($year))][trim(intval($month))] = $value;
+        }
+
+        if (is_array($data) && $data) {
             $content = '';
-            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($statData).'</script>';
+            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($data).'</script>';
             $content .= $this->cObj->substituteMarkerArray($subpartArray['statistic'], $markerArray);
             return $this->cObj->substituteSubpart($this->template, '###STATISTIC###', $content, true);
         }
 
         return $content;
+
     }
 }
