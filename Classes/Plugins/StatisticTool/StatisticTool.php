@@ -78,25 +78,8 @@ class StatisticTool extends \tx_dlf_plugin
         }
 
         $subpartArray['statistic'] = $this->cObj->getSubpart($this->template, '###STATISTIC###');
-        $statisticData = $this->getStatisticData();
 
-        if (is_array($statisticData) && $statisticData) {
-            $content = '';
-            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($statisticData).'</script>';
-            $content .= $this->cObj->substituteMarkerArray($subpartArray['statistic'], $markerArray);
-            return $this->cObj->substituteSubpart($this->template, '###STATISTIC###', $content, true);
-        }
-
-        return $content;
-    }
-
-    /**
-     * Get Statistic data
-
-     * @return array
-     */
-    protected function getStatisticData()
-    {
+        // get statistic data
         $conf = array(
             'useCacheHash'     => 0,
             'parameter'        => $this->conf['apiPid'] . ' - piwik_download',
@@ -105,20 +88,22 @@ class StatisticTool extends \tx_dlf_plugin
         );
 
         $statisticData = file( $this->cObj->typoLink_URL($conf), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        // $statisticData = file_get_contents($this->cObj->typoLink_URL($conf));
 
-        echo print_r($statisticData);
-
-        die();
-
-        $data = array();
+        $statData = array();
         foreach ($statisticData as $item) {
             list($monthYear, $object, $count) = explode(' ', $item);
             list($month, $year) = explode('-',trim($monthYear));
-            $data[trim(intval($year))][trim(intval($month))][trim(strtolower($object))] = trim(intval($count));
+            $statData[trim(intval($year))][trim(intval($month))][trim(strtolower($object))] = trim(intval($count));
         }
 
-        return $data;
+        if (is_array($statData) && $statData) {
+            $content = '';
+            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($statisticData).'</script>';
+            $content .= $this->cObj->substituteMarkerArray($subpartArray['statistic'], $markerArray);
+            return $this->cObj->substituteSubpart($this->template, '###STATISTIC###', $content, true);
+        }
+
+        return $content;
     }
 
     /**
