@@ -98,7 +98,7 @@ class StatisticTool extends \tx_dlf_plugin
 
         if (is_array($statData) && $statData) {
             $content = '';
-            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($statisticData).'</script>';
+            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($statData).'</script>';
             $content .= $this->cObj->substituteMarkerArray($subpartArray['statistic'], $markerArray);
             return $this->cObj->substituteSubpart($this->template, '###STATISTIC###', $content, true);
         }
