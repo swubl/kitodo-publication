@@ -72,11 +72,6 @@ class StatisticTool extends \tx_dlf_plugin
 
         }
 
-        $attachments = $this->getAttachments();
-        if (!in_array('STAT-O', array_keys($attachments))) {
-            return $content;
-        }
-
         $subpartArray['statistic'] = $this->cObj->getSubpart($this->template, '###STATISTIC###');
 
         // get statistic data
@@ -88,6 +83,10 @@ class StatisticTool extends \tx_dlf_plugin
         );
 
         $statisticData = file( $this->cObj->typoLink_URL($conf), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        if (!is_array($statisticData) || !sizeof($statisticData) > 0 || !preg_match("/^[0-9]{2}-[0-9]{4}/",$statisticData[0],$matches)) {
+            return $content;
+        }
 
         $statData = array();
         foreach ($statisticData as $item) {
@@ -105,54 +104,4 @@ class StatisticTool extends \tx_dlf_plugin
 
         return $content;
     }
-
-    /**
-     * Get PDF document list
-
-     * @return array of attachments
-     */
-    protected function getAttachments()
-    {
-
-        // Get pdf documents
-        $xPath = 'mets:fileSec/mets:fileGrp[@USE="' . $this->conf['fileGrpDownload'] . '"]/mets:file';
-
-        $files = $this->doc->mets->xpath($xPath);
-
-        if (!is_array($files)) {
-
-            return array();
-
-        }
-
-        foreach ($files as $key => $file) {
-
-            $singleFile = array();
-
-            foreach ($file->attributes('mext', 1) as $attribute => $value) {
-
-                $singleFile[$attribute] = $value;
-
-            }
-
-            foreach ($file->attributes() as $attribute => $value) {
-
-                $singleFile[$attribute] = $value;
-
-            }
-
-            $attachments[(string) $singleFile['ID']] = $singleFile;
-
-        }
-
-        if (is_array($attachments) && count($attachments) > 1) {
-
-            ksort($attachments);
-
-        }
-
-        return $attachments;
-    }
-
-
 }
