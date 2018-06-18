@@ -679,6 +679,10 @@ Sächsische Landesbibliothek- Staats- und Universitätsbibliothek Dresden
 			<source>DPF: RelatedListTool</source>
 			<target>DPF: RelatedList Tool</target>
 		</trans-unit>
+		<trans-unit id="tt_content.dpf_statistictool" approved="yes">
+			<source>DPF: StatisticTool</source>
+			<target>DPF: Statistik Tool</target>
+		</trans-unit>
 		<trans-unit id="tt_content.pi_flexform.apiPid" approved="yes">
 			<source>API Pid</source>
 			<target>API Pid</target>

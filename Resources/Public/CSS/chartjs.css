@@ -1,0 +1,24 @@
+/* plugin statistic */
+.chartWrapper {
+    position: relative;
+}
+
+.chartWrapper > canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events:none;
+}
+
+.chartAreaWrapper {
+    width: 55vw;
+    overflow-x: scroll;
+}
+
+.chart-container {
+    /* position: relative; */
+    margin: auto;
+    margin-bottom: 10px;
+    height: 30vh;
+    width: 300vw;
+}

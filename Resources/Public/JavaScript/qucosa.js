@@ -106,8 +106,92 @@ $(document).ready(function() {
             setGndAutocomplete(jQuery(this).data("field"),  jQuery(this).data("groupindex"));
         });
     }
-    
+
+    // plugin statistic
+    var dataLabel = [];
+    var dataPdf = [];
+    var dataFrontdoor = [];
+    var months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+    jQuery.each(ar,function(year,yearValues){
+
+        jQuery.each(yearValues,function(month,monthValues){
+            var j = ""+month;
+            if (month<10) j = "0"+month;
+            dataLabel.push(j+"."+year);
+            if (monthValues) {
+                dataPdf.push(monthValues['pdf']);
+                dataFrontdoor.push(monthValues['frontdoor']);
+            } else {
+                dataPdf.push(0);
+                dataFrontdoor.push(0);
+            }
+        });
+    });
+
+
+    var ctx = jQuery("#chart");
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: dataLabel,
+            datasets: [{
+                label: 'Aufrufe Landing Page',
+                data: dataFrontdoor,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255,99,132,1)',
+                borderWidth: 1
+            },{
+                label: 'Anzahl Datei-Downloads',
+                data: dataPdf,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1,
+                responsive: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                onComplete: function(animation) {
+                    var sourceCanvas = myChart.chart.canvas;
+                    var copyWidth = myChart.scales['y-axis-0'].width - 10;
+                    var copyHeight = myChart.scales['y-axis-0'].height + myChart.scales['y-axis-0'].top + 10;
+                    var targetCtx = document.getElementById("myChartAxis").getContext("2d");
+                    targetCtx.canvas.width = copyWidth;
+                    targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }],
+                xAxes: [{
+                    type: 'category',
+                    //labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                    ticks: {
+                        autoSkip: false,
+                        stepSize: 10
+                    }
+                }]
+            },
+            legend: {
+                position: 'top',
+            }
+        }
+    });
+
+
+    var objDiv = jQuery(".chartAreaWrapper");
+    objDiv.scrollLeft(-3459834598);
+    // plugin statistic
+
 });
+
+
 var validateFormAndSave = function() {
     jQuery("#validDocument").val("0");
     if (validateForm()) {
