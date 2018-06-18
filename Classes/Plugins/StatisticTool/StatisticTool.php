@@ -56,12 +56,10 @@ class StatisticTool extends \tx_dlf_plugin
         // Load current document.
         $this->loadDocument();
 
-//        if ($this->doc === null || empty($this->conf['fileGrpDownload'])) {
-
+        if ($this->doc === null || empty($this->conf['fileGrpDownload'])) {
             // Quit without doing anything if required variables are not set.
-//            return $content;
-
-//        }
+           return $content;
+        }
 
         // Load template file.
         if (!empty($this->conf['templateFile'])) {
@@ -74,55 +72,22 @@ class StatisticTool extends \tx_dlf_plugin
 
         }
 
-
-
-
-
-        $statisticData = $this->getStatisticData();
-
-        $content = '';
-
-        if (is_array($attachments)) {
-
-            foreach ($attachments as $id => $file) {
-
-                $conf = array(
-                    'useCacheHash'     => 0,
-                    'parameter'        => $this->conf['apiPid'] . ' - piwik_download',
-                    'additionalParams' => '&tx_dpf[qid]=' . $this->doc->recordId . '&tx_dpf[action]=attachment' . '&tx_dpf[attachment]=' . $file['ID'],
-                    'forceAbsoluteUrl' => true,
-                );
-
-                $title = $file['LABEL'] ? $file['LABEL'] : $file['ID'];
-
-                // Create a-tag without VG-Wort Redirect
-                if ($vgwort === FALSE) {
-
-                    // replace uid with URI to dpf API
-                    $markerArray['###FILE###'] = $this->cObj->typoLink($title, $conf);
-
-                    // Create a-tag with VG-Wort Redirect
-                } elseif(!empty($vgwort)) {
-
-                    $qucosaUrl = urlencode($this->cObj->typoLink_URL($conf));
-
-                    $confVgwort = array(
-                        'useCacheHash'     => 0,
-                        'parameter'        => $vgwort . $qucosaUrl . ' - piwik_download',
-                    );
-
-                    $markerArray['###FILE###'] = $this->cObj->typoLink($title, $confVgwort);
-
-                }
-
-                $content .= $this->cObj->substituteMarkerArray($subpartArray['downloads'], $markerArray);
-
-            }
-
+        $attachments = $this->getAttachments();
+        if (!in_array('STAT-O', array_keys($attachments))) {
+            return $content;
         }
 
-        return $this->template;
+        $subpartArray['statistic'] = $this->cObj->getSubpart($this->template, '###STATISTIC###');
+        $statisticData = $this->getStatisticData();
 
+        if (is_array($statisticData) && $statisticData) {
+            $content = '';
+            $markerArray['###DATA###'] = '<script>var ar = '.json_encode($statisticData).'</script>';
+            $content .= $this->cObj->substituteMarkerArray($subpartArray['statistic'], $markerArray);
+            return $this->cObj->substituteSubpart($this->template, '###STATISTIC###', $content, true);
+        }
+
+        return $content;
     }
 
     /**
@@ -132,7 +97,6 @@ class StatisticTool extends \tx_dlf_plugin
      */
     protected function getStatisticData()
     {
-
         $conf = array(
             'useCacheHash'     => 0,
             'parameter'        => $this->conf['apiPid'] . ' - piwik_download',
@@ -140,9 +104,12 @@ class StatisticTool extends \tx_dlf_plugin
             'forceAbsoluteUrl' => true,
         );
 
-
         $statisticData = file( $this->cObj->typoLink_URL($conf), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         // $statisticData = file_get_contents($this->cObj->typoLink_URL($conf));
+
+        echo print_r($statisticData);
+
+        die();
 
         $data = array();
         foreach ($statisticData as $item) {
@@ -151,9 +118,56 @@ class StatisticTool extends \tx_dlf_plugin
             $data[trim(intval($year))][trim(intval($month))][trim(strtolower($object))] = trim(intval($count));
         }
 
-        //echo "<script>var ar = ".json_encode($data)."</script>";
+        return $data;
+    }
+
+    /**
+     * Get PDF document list
+
+     * @return array of attachments
+     */
+    protected function getAttachments()
+    {
+
+        // Get pdf documents
+        $xPath = 'mets:fileSec/mets:fileGrp[@USE="' . $this->conf['fileGrpDownload'] . '"]/mets:file';
+
+        $files = $this->doc->mets->xpath($xPath);
+
+        if (!is_array($files)) {
+
+            return array();
+
+        }
+
+        foreach ($files as $key => $file) {
+
+            $singleFile = array();
+
+            foreach ($file->attributes('mext', 1) as $attribute => $value) {
+
+                $singleFile[$attribute] = $value;
+
+            }
+
+            foreach ($file->attributes() as $attribute => $value) {
+
+                $singleFile[$attribute] = $value;
+
+            }
+
+            $attachments[(string) $singleFile['ID']] = $singleFile;
+
+        }
+
+        if (is_array($attachments) && count($attachments) > 1) {
+
+            ksort($attachments);
+
+        }
 
         return $attachments;
     }
+
 
 }
