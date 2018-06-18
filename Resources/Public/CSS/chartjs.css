@@ -11,7 +11,7 @@
 }
 
 .chartAreaWrapper {
-    width: 55vw;
+    /* width: 55vw; */
     overflow-x: scroll;
 }
 
@@ -20,5 +20,6 @@
     margin: auto;
     margin-bottom: 10px;
     height: 30vh;
-    width: 300vw;
+    /* width: 300vw; */
+    width: 100%;
 }
