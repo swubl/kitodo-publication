@@ -176,8 +176,8 @@ $(document).ready(function() {
         });
 
 
-        var objDiv = jQuery(".chartAreaWrapper");
-        objDiv.scrollLeft(-3459834598);
+        //var objDiv = jQuery(".chartAreaWrapper");
+        //objDiv.scrollLeft(-3459834598);
     }
     // plugin statistic
 
