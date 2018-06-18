@@ -19,7 +19,8 @@
     /* position: relative; */
     margin: auto;
     margin-bottom: 10px;
-    height: 30vh;
+    /* height: 30vh; */
+    height: 200px;
     /* width: 300vw; */
     width: 100%;
 }
