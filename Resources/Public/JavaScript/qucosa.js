@@ -149,9 +149,6 @@ $(document).ready(function() {
                         var sourceCanvas = myChart.chart.canvas;
                         var copyWidth = myChart.scales['y-axis-0'].width - 10;
                         var copyHeight = myChart.scales['y-axis-0'].height + myChart.scales['y-axis-0'].top + 10;
-                        var targetCtx = document.getElementById("myChartAxis").getContext("2d");
-                        targetCtx.canvas.width = copyWidth;
-                        targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
                     }
                 },
                 scales: {
@@ -162,7 +159,6 @@ $(document).ready(function() {
                     }],
                     xAxes: [{
                         type: 'category',
-                        //labels: ['January', 'February', 'March', 'April', 'May', 'June'],
                         ticks: {
                             autoSkip: false,
                             stepSize: 10
@@ -174,10 +170,6 @@ $(document).ready(function() {
                 }
             }
         });
-
-
-        //var objDiv = jQuery(".chartAreaWrapper");
-        //objDiv.scrollLeft(-3459834598);
     }
     // plugin statistic
 
