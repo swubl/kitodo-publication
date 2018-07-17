@@ -103,4 +103,15 @@ body {
     margin-bottom: 20px;
 }
 
+.tx-dpf .dropdown-options .dropdown-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.tx-dpf .dropdown-options .dropdown-toggle {
+    margin-bottom: 0 !important;
+    display: table !important;
+}
+
 /* EOF */

@@ -94,8 +94,11 @@ $(document).ready(function() {
     }
 
     addRemoveFileButton();
-    
+
+    inputWithOptions();
+
 });
+
 var validateFormAndSave = function() {
     jQuery("#validDocument").val("0");
     if (validateForm()) {
@@ -486,4 +489,18 @@ function addRemoveFileButton() {
         evt.preventDefault();
         $(this).siblings('.input_file_upload').val('');
     })
+}
+
+var inputWithOptions = function() {
+
+    jQuery(".dropdown-toggle").click(function(e){
+        jQuery(e.target).closest(".form-group").find('.input-dropdown').focus();
+    });
+
+    jQuery(".dropdown-menu a").click(function(e){
+        var optionValue = jQuery(e.target).html();
+        jQuery(e.target).closest(".form-group").find('.input-dropdown').val(optionValue);
+        jQuery(e.target).closest(".form-group").find('.input-dropdown').focus();
+        e.preventDefault();
+    });
 }

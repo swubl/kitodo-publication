@@ -277,6 +277,17 @@
     margin-left: 10px;
 }
 
+.tx-dpf .dropdown-options .dropdown-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.tx-dpf .dropdown-options .dropdown-toggle {
+    margin-bottom: 0 !important;
+    display: table !important;
+}
+
 
 /* -- error handling -------------------------------------------------------------------- */
 
@@ -332,6 +343,7 @@ ul.error-files-backbutton li {
     list-style: disc;
     margin-left: 13px;
 }
+
 
 
 /* EOF */

@@ -82,6 +82,25 @@
                 </f:else>
             </f:if>
         </f:case>
+        <f:case value="5">
+            <div class="dropdown-options input-group">
+                <f:form.textfield id="inp_{fieldItem.uid}"
+                              property="metadata.{formPageUid}-{formGroupUid}-{groupIndex}-{fieldItem.uid}-{fieldIndex}"
+                              value="{fieldItem.value}" class="input-field form-control input-dropdown {fieldItem.fillOutService}"
+                              additionalAttributes="{data-toggle:'dropdown',data-field:fieldItem.uid,data-index:fieldIndex,data-mandatory:fieldItem.mandatory,data-group:formGroupUid,data-groupindex:groupIndex,data-default:fieldItem.hasDefaultValue,data-regexp:fieldItem.validation,data-datatype:fieldItem.dataType,data-label:fieldItem.displayName}"/>
+
+                <span class="input-group-btn">
+                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <f:for each="{fieldItem.inputOptions}" as="inputOptionLabel" key="inputOptionValue" iteration="pageIterator">
+                            <li><a tabindex="-1" href="#">{inputOptionValue}</a></li>
+                        </f:for>
+                    </ul>
+                </span>
+            </div>
+        </f:case>
     </f:switch>
 
     <f:if condition="{fieldIndex}">
