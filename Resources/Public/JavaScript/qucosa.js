@@ -102,7 +102,9 @@ $(document).ready(function() {
             setGndAutocomplete(jQuery(this).data("field"),  jQuery(this).data("groupindex"));
         });
     }
-    
+
+    inputWithOptions();
+
 });
 
 var validateFormAndSave = function() {
@@ -607,4 +609,58 @@ function setGndAutocomplete(fieldId, groupIndex) {
             )
             .appendTo( ul );
     };
+}
+
+var inputWithOptions = function() {
+
+    $.widget( "custom.dropdownoptions", {
+        _create: function() {
+
+            var availableTags = [];
+            var test = this.element
+                .closest(".dropdown-options")
+                .find(".dropdown-options-values li")
+                .each(function(){
+                    if (jQuery(this).text().length > 0) {
+                        availableTags.push(jQuery(this).text());
+                    }
+                });
+
+            this.element
+                .addClass( ".dropdown-options-input" )
+                .autocomplete({
+                    minLength: 0,
+                    source: availableTags
+                });
+
+            this._createShowAllButton();
+        },
+        _createShowAllButton: function() {
+
+            var input = this.element;
+
+            wasOpen = false;
+
+            input
+                .closest(".dropdown-options")
+                .find(".dropdown-options-toggle")
+                .on( "mousedown", function() {
+                    wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+                })
+                .on( "click", function() {
+                    input.trigger( "focus" );
+                    if ( wasOpen ) {
+                        return;
+                    }
+                    input.autocomplete( "search", "" );
+
+                });
+            input
+                .on( "click", function() {
+                    input.autocomplete( "search", "" );
+                });
+        }
+    });
+
+    $( ".dropdown-options-input" ).dropdownoptions();
 }
