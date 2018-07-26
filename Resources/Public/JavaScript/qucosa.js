@@ -493,14 +493,54 @@ function addRemoveFileButton() {
 
 var inputWithOptions = function() {
 
-    jQuery(".dropdown-toggle").click(function(e){
-        jQuery(e.target).closest(".form-group").find('.input-dropdown').focus();
+    $.widget( "custom.dropdownoptions", {
+        _create: function() {
+
+            var availableTags = [];
+            var test = this.element
+                .closest(".dropdown-options")
+                .find(".dropdown-options-values li")
+                .each(function(){
+                    if (jQuery(this).html().length > 0) {
+                        availableTags.push(jQuery(this).html());
+                    }
+                });
+
+            this.element
+                .addClass( ".dropdown-options-input" )
+                .autocomplete({
+                    minLength: 0,
+                    source: availableTags
+                });
+
+            this._createShowAllButton();
+        },
+        _createShowAllButton: function() {
+
+            var input = this.element;
+
+            wasOpen = false;
+
+            input
+                .closest(".dropdown-options")
+                .find(".dropdown-options-toggle")
+                .on( "mousedown", function() {
+                    wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+                })
+                .on( "click", function() {
+                    input.trigger( "focus" );
+                    if ( wasOpen ) {
+                        return;
+                    }
+                    input.autocomplete( "search", "" );
+
+                });
+            input
+                .on( "click", function() {
+                    input.autocomplete( "search", "" );
+                });
+        }
     });
 
-    jQuery(".dropdown-menu a").click(function(e){
-        var optionValue = jQuery(e.target).html();
-        jQuery(e.target).closest(".form-group").find('.input-dropdown').val(optionValue);
-        jQuery(e.target).closest(".form-group").find('.input-dropdown').focus();
-        e.preventDefault();
-    });
+    $( ".dropdown-options-input" ).dropdownoptions();
 }
