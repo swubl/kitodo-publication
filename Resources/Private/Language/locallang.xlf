@@ -144,10 +144,10 @@
 			<source>validate</source>
 		</trans-unit>
 		<trans-unit id="form_button.nextPage">
-			<source>Next</source>
+			<source>next</source>
 		</trans-unit>
 		<trans-unit id="form_button.prevPage">
-			<source>Previous</source>
+			<source>previous</source>
 		</trans-unit>
 		<trans-unit id="form_error_msg.all">
 			<source>The form contains errors.</source>
