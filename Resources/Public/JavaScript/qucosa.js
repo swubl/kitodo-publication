@@ -491,7 +491,7 @@ function addRemoveFileButton() {
 
 var previousNextFormPage = function() {
 
-    $('.prev-next-buttons a').click(function () {
+    $('.prev-next-buttons button').click(function (e) {
         var activePage = $('.tx-dpf-tabs').find('li.active');
         var newActivePage = activePage;
 
@@ -512,6 +512,13 @@ var previousNextFormPage = function() {
 
             updatePrevNextButtons(newActivePage);
         }
+
+        $('html, body').animate({
+            scrollTop:$('.tx-dpf').offset().top
+        },'fast');
+
+        e.preventDefault();
+
     });
 
     updatePrevNextButtons($('.tx-dpf-tabs li.active'));
