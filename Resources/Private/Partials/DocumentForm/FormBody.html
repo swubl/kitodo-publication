@@ -78,7 +78,16 @@
         </button>
     </div>
 </div>
-
+<div class="prev-next-buttons">
+    <a href="#" id="next-form-page" class="btn btn-s btn-primary">
+        {f:translate(key: 'form_button.nextPage')}
+        <span class="glyphicon glyphicon glyphicon-menu-right"></span>
+    </a>
+    <a href="#" id="prev-form-page" class="btn btn-s btn-primary">
+        <span class="glyphicon glyphicon glyphicon-menu-left"></span>
+        {f:translate(key: 'form_button.prevPage')}
+    </a>
+</div>
 <div class="form-submit">
     <f:form.button name="save" id="save" disabled="{f:if(condition: '{documentForm.saveDisabled}', then: 'disabled')}"
                    class="btn btn-lg btn-success">
