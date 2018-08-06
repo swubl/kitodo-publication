@@ -190,12 +190,12 @@
 			<target>überprüfen</target>
 		</trans-unit>
         <trans-unit id="form_button.nextPage">
-            <source>Next</source>
-            <target>Nächste </target>
+            <source>next</source>
+            <target>nächste </target>
         </trans-unit>
         <trans-unit id="form_button.prevPage">
-            <source>Previous</source>
-            <target>Vorherige</target>
+            <source>previous</source>
+            <target>vorherige</target>
         </trans-unit>
 		<trans-unit id="form_error_msg.all" approved="yes">
 			<source>The form contains errors.</source>
