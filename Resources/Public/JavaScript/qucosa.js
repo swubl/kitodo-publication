@@ -94,7 +94,8 @@ $(document).ready(function() {
     }
 
     addRemoveFileButton();
-    
+
+    previousNextFormPage();
 });
 var validateFormAndSave = function() {
     jQuery("#validDocument").val("0");
@@ -486,4 +487,51 @@ function addRemoveFileButton() {
         evt.preventDefault();
         $(this).siblings('.input_file_upload').val('');
     })
+}
+
+var previousNextFormPage = function() {
+
+    $('.prev-next-buttons a').click(function () {
+        var activePage = $('.tx-dpf-tabs').find('li.active');
+        var newActivePage = activePage;
+
+        if ($(this).attr('id') == 'next-form-page') {
+            newActivePage = activePage.next();
+        } else {
+            newActivePage = activePage.prev();
+        }
+
+        if (newActivePage.length > 0) {
+            activePage.removeClass('active');
+            activePage.find('a').attr('aria-expanded', 'false')
+            $('.tab-content').find('div.active').removeClass('active');
+
+            newActivePage.addClass('active');
+            newActivePage.find('a').attr('aria-expanded', 'true');
+            $('.tab-content').find(newActivePage.find('a').attr('href')).addClass('active');
+
+            updatePrevNextButtons(newActivePage);
+        }
+    });
+
+    updatePrevNextButtons($('.tx-dpf-tabs li.active'));
+
+    $('.tx-dpf-tabs li').click(function(){
+        updatePrevNextButtons($(this));
+    });
+
+}
+
+var updatePrevNextButtons = function(activePage) {
+
+    if (activePage.prev().length < 1) {
+        $('#prev-form-page').addClass('disabled');
+    } else {
+        $('#prev-form-page').removeClass('disabled');
+    }
+    if (activePage.next().length < 1) {
+        $('#next-form-page').addClass('disabled');
+    } else {
+        $('#next-form-page').removeClass('disabled');
+    }
 }

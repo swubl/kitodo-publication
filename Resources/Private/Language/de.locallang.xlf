@@ -189,6 +189,14 @@
 			<source>validate</source>
 			<target>überprüfen</target>
 		</trans-unit>
+        <trans-unit id="form_button.nextPage">
+            <source>Next</source>
+            <target>Nächste </target>
+        </trans-unit>
+        <trans-unit id="form_button.prevPage">
+            <source>Previous</source>
+            <target>Vorherige</target>
+        </trans-unit>
 		<trans-unit id="form_error_msg.all" approved="yes">
 			<source>The form contains errors.</source>
 			<target>Das Formular enthält Fehler.</target>
