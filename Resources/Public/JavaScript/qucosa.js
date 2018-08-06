@@ -511,11 +511,11 @@ var previousNextFormPage = function() {
             $('.tab-content').find(newActivePage.find('a').attr('href')).addClass('active');
 
             updatePrevNextButtons(newActivePage);
-        }
 
-        $('html, body').animate({
-            scrollTop:$('.tx-dpf').offset().top
-        },'fast');
+            $('html, body').animate({
+                scrollTop:$('.tx-dpf').offset().top
+            },'fast');
+        }
 
         e.preventDefault();
 
