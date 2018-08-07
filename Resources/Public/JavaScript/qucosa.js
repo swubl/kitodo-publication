@@ -713,8 +713,8 @@ var inputWithOptions = function() {
                 .closest(".dropdown-options")
                 .find(".dropdown-options-values li")
                 .each(function(){
-                    if (jQuery(this).html().length > 0) {
-                        availableTags.push(jQuery(this).html());
+                    if (jQuery(this).text().length > 0) {
+                        availableTags.push(jQuery(this).text());
                     }
                 });
 
