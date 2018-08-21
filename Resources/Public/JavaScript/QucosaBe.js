@@ -533,21 +533,21 @@ define(['jquery', 'TYPO3/CMS/Dpf/jquery-ui','twbs/bootstrap-datetimepicker'], fu
 
     var inputWithOptions = function() {
 
-        $.widget( "custom.dropdownoptions", {
-            _create: function() {
+        $.widget("custom.dropdownoptions", {
+            _create: function () {
 
                 var availableTags = [];
                 var test = this.element
                     .closest(".dropdown-options")
                     .find(".dropdown-options-values li")
-                    .each(function(){
+                    .each(function () {
                         if ($(this).text().length > 0) {
                             availableTags.push($(this).text());
                         }
                     });
 
                 this.element
-                    .addClass( ".dropdown-options-input" )
+                    .addClass(".dropdown-options-input")
                     .autocomplete({
                         minLength: 0,
                         source: availableTags
@@ -555,7 +555,7 @@ define(['jquery', 'TYPO3/CMS/Dpf/jquery-ui','twbs/bootstrap-datetimepicker'], fu
 
                 this._createShowAllButton();
             },
-            _createShowAllButton: function() {
+            _createShowAllButton: function () {
 
                 var input = this.element;
 
@@ -564,25 +564,79 @@ define(['jquery', 'TYPO3/CMS/Dpf/jquery-ui','twbs/bootstrap-datetimepicker'], fu
                 input
                     .closest(".dropdown-options")
                     .find(".dropdown-options-toggle")
-                    .on( "mousedown", function() {
-                        wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+                    .on("mousedown", function () {
+                        wasOpen = input.autocomplete("widget").is(":visible");
                     })
-                    .on( "click", function() {
-                        input.trigger( "focus" );
-                        if ( wasOpen ) {
+                    .on("click", function () {
+                        input.trigger("focus");
+                        if (wasOpen) {
                             return;
                         }
-                        input.autocomplete( "search", "" );
+                        input.autocomplete("search", "");
 
                     });
                 input
-                    .on( "click", function() {
-                        input.autocomplete( "search", "" );
+                    .on("click", function () {
+                        input.autocomplete("search", "");
                     });
             }
         });
 
-        $( ".dropdown-options-input" ).dropdownoptions();
+        $(".dropdown-options-input").dropdownoptions();
+    }
+
+    var previousNextFormPage = function() {
+
+        $('.prev-next-buttons button').click(function (e) {
+            var activePage = $('.tx-dpf-tabs').find('li.active');
+            var newActivePage = activePage;
+
+            if ($(this).attr('id') == 'next-form-page') {
+                newActivePage = activePage.next();
+            } else {
+                newActivePage = activePage.prev();
+            }
+
+            if (newActivePage.length > 0) {
+                activePage.removeClass('active');
+                activePage.find('a').attr('aria-expanded', 'false')
+                $('.tab-content').find('div.active').removeClass('active');
+
+                newActivePage.addClass('active');
+                newActivePage.find('a').attr('aria-expanded', 'true');
+                $('.tab-content').find(newActivePage.find('a').attr('href')).addClass('active');
+
+                updatePrevNextButtons(newActivePage);
+
+                $('html, body').animate({
+                    scrollTop:$('.tx-dpf').offset().top
+                },'fast');
+            }
+
+            e.preventDefault();
+
+        });
+
+        updatePrevNextButtons($('.tx-dpf-tabs li.active'));
+
+        $('.tx-dpf-tabs li').click(function(){
+            updatePrevNextButtons($(this));
+        });
+
+    }
+
+    var updatePrevNextButtons = function(activePage) {
+
+        if (activePage.prev().length < 1) {
+            $('#prev-form-page').addClass('disabled');
+        } else {
+            $('#prev-form-page').removeClass('disabled');
+        }
+        if (activePage.next().length < 1) {
+            $('#next-form-page').addClass('disabled');
+        } else {
+            $('#next-form-page').removeClass('disabled');
+        }
     }
 
     $(window).scroll(function() {
@@ -658,6 +712,8 @@ define(['jquery', 'TYPO3/CMS/Dpf/jquery-ui','twbs/bootstrap-datetimepicker'], fu
         }
 
         addRemoveFileButton();
+
+        previousNextFormPage();
 
         gnd = $('.gnd');
         if(gnd.length > 0) {
