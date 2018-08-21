@@ -101,6 +101,19 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
 
             case 'attachment':
 
+                // ------------------------------
+                // Access restriction enforcement
+                // ------------------------------
+                if ($enforceResult = $this->enforceAccessRestriction($piVars)) {
+
+                    if ($enforceResult == "ACCESS_DENIED") {
+                        $this->response->setStatus(403);
+                        return 'Access denied';
+                    } else {
+                        $this->redirectToUri($enforceResult, 0, 403);
+                    }
+                }
+
                 $qid = $piVars['qid'];
 
                 $attachment = $piVars['attachment'];
@@ -289,5 +302,99 @@ class GetFileController extends \EWW\Dpf\Controller\AbstractController
             && in_array($action, $this->settings['allowedActions']);
         return !$allowed;
     }
+
+    /**
+     * Checks if access to the attachment is allowed.
+     * If not, an URI for an error page redirect or ACCESS_DENIED is returned.
+     *
+     * Example for the TYPOSCRIPT configuration:
+     *
+     * plugin.tx_dpf.settings {
+     *   accessRestriction {
+     *     xpath = /mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]
+     *       accessConditions {
+     *         10 {
+     *           value = kein Zugriff (interne Archivierung)
+     *           restricted = 1
+     *           errorPageUid = 2150
+     *         }
+     *
+     *         20 {
+     *           value = uneingeschränkter Zugriff
+     *           restricted = 0
+     *           errorPageUid = 2150
+     *         }
+     *      }
+     *   }
+     * }
+     *
+     * @param array $piVars
+     *
+     * @return string
+     */
+    private function enforceAccessRestriction($piVars)
+    {
+        if (array_key_exists('accessRestriction', $this->settings)) {
+
+            $metsXml = '';
+
+            if(key_exists('preview', $piVars) && $piVars['preview']) {
+
+                if (is_numeric($piVars['qid'])) {
+                    $document = $this->documentRepository->findOneByUid($piVars['qid']);
+                } else {
+                    $document = $this->documentRepository->findOneByObjectIdentifier($piVars['qid']);
+                }
+
+                if ($document) {
+                    $metsXml = $this->buildMetsXml($document);
+                }
+
+            } else {
+                $remoteRepository = $this->objectManager->get('\EWW\Dpf\Services\Transfer\FedoraRepository');
+                $metsXml = $remoteRepository->retrieve($piVars['qid']);
+            }
+
+            if ($metsXml) {
+
+                $mets = new \EWW\Dpf\Helper\Mets($metsXml);
+                $mods = $mets->getMods();
+
+                if ($this->settings['accessRestriction']['xpath']) {
+                    $accessConditionXPath = $this->settings['accessRestriction']['xpath'];
+                } else {
+                    $accessConditionXPath = '/mods:mods/mods:accessCondition[@type="restriction on access"][@displayLabel="Zugriff"]';
+                }
+
+                $accessNode = $mods->getModsXpath()->query($accessConditionXPath);
+
+                if ($accessNode->length > 0) {
+                    $accessConditionValue = $accessNode->item(0)->nodeValue;
+                }
+
+                if (is_array($this->settings['accessRestriction']['accessConditions'])) {
+                    foreach ($this->settings['accessRestriction']['accessConditions'] as $accessCondition) {
+                        if ($accessCondition['value'] === $accessConditionValue) {
+                            if (array_key_exists('restricted', $accessCondition) && $accessCondition['restricted']) {
+                                $uriBuilder = $this->uriBuilder;
+                                $uri = $uriBuilder
+                                    ->setTargetPageUid($accessCondition['errorPageUid'])
+                                    ->build();
+
+                                return $uri;
+                            } else {
+                                return NULL;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return "ACCESS_DENIED";
+        } else {
+            return NULL;
+        }
+    }
+
 }
 
