@@ -15,6 +15,11 @@ namespace EWW\Dpf\Plugins\RelatedListTool;
  * The TYPO3 project - inspiring people to share!
  */
 
+
+use TYPO3\CMS\Core\Service\MarkerBasedTemplateService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+
 /**
  * Plugin 'DPF: RElatedListTool' for the 'dlf / dpf' extension.
  *
@@ -39,6 +44,9 @@ class RelatedListTool extends \tx_dlf_plugin
      */
     public function main($content, $conf)
     {
+
+        /** @var \TYPO3\CMS\Core\Service\MarkerBasedTemplateService $templateService */
+        $templateService = GeneralUtility::makeInstance(MarkerBasedTemplateService::class);
 
         $this->init($conf);
 
@@ -66,15 +74,16 @@ class RelatedListTool extends \tx_dlf_plugin
         // Load template file.
         if (!empty($this->conf['templateFile'])) {
 
-            $this->template = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['templateFile']), '###TEMPLATE###');
+            $this->template = $templateService->getSubpart(file_get_contents($GLOBALS['TSFE']->tmpl->getFileName($this->conf['templateFile'])),'###TEMPLATE###');
 
         } else {
 
-            $this->template = $this->cObj->getSubpart($this->cObj->fileResource('EXT:dpf/Classes/Plugins/RelatedListTool/template.tmpl'), '###TEMPLATE###');
+            $this->template = $templateService->getSubpart(file_get_contents($GLOBALS['TSFE']->tmpl->getFileName('EXT:dpf/Classes/Plugins/RelatedListTool/template.tmpl')), '###TEMPLATE###');
 
         }
 
-        $subpartArray['items'] = $this->cObj->getSubpart($this->template, '###ITEMS###');
+        $subpartArray['items'] = $templateService->getSubpart($this->template, '###ITEMS###');
+
 
         $relatedItems = $this->getRelatedItems();
 
@@ -122,11 +131,11 @@ class RelatedListTool extends \tx_dlf_plugin
                 // replace uid with URI to dpf API
                 $markerArray['###ITEM###'] = $this->cObj->typoLink($title, $conf);
 
-                $content .= $this->cObj->substituteMarkerArray($subpartArray['items'], $markerArray);
+                $content .= $templateService->substituteMarkerArray($subpartArray['items'], $markerArray);
             }
         }
 
-        return $this->cObj->substituteSubpart($this->template, '###ITEMS###', $content, true);
+        return $templateService->substituteSubpart($this->template, '###ITEMS###', $content, true);
 
     }
 

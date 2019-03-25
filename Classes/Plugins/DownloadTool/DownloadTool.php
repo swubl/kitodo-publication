@@ -14,7 +14,9 @@ namespace EWW\Dpf\Plugins\DownloadTool;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Service\MarkerBasedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 
 /**
  * Plugin 'DPF: DownloadTool' for the 'dlf / dpf' extension.
@@ -39,6 +41,9 @@ class DownloadTool extends \tx_dlf_plugin
      */
     public function main($content, $conf)
     {
+
+        /** @var \TYPO3\CMS\Core\Service\MarkerBasedTemplateService $templateService */
+        $templateService = GeneralUtility::makeInstance(MarkerBasedTemplateService::class);
 
         $this->init($conf);
 
@@ -66,15 +71,15 @@ class DownloadTool extends \tx_dlf_plugin
         // Load template file.
         if (!empty($this->conf['templateFile'])) {
 
-            $this->template = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['templateFile']), '###TEMPLATE###');
+            $this->template = $templateService->getSubpart(file_get_contents($GLOBALS['TSFE']->tmpl->getFileName($this->conf['templateFile'])), '###TEMPLATE###');
 
         } else {
 
-            $this->template = $this->cObj->getSubpart($this->cObj->fileResource('EXT:dpf/Classes/Plugins/DownloadTool/template.tmpl'), '###TEMPLATE###');
+            $this->template = $templateService->getSubpart(file_get_contents($GLOBALS['TSFE']->tmpl->getFileName('EXT:dpf/Classes/Plugins/DownloadTool/template.tmpl')), '###TEMPLATE###');
 
         }
 
-        $subpartArray['downloads'] = $this->cObj->getSubpart($this->template, '###DOWNLOADS###');
+        $subpartArray['downloads'] = $templateService->getSubpart($this->template, '###DOWNLOADS###');
 
         // Show all PDF documents in download filegroup
         $attachments = $this->getAttachments();
@@ -116,13 +121,13 @@ class DownloadTool extends \tx_dlf_plugin
 
                 }
 
-                $content .= $this->cObj->substituteMarkerArray($subpartArray['downloads'], $markerArray);
+                $content .= $templateService->substituteMarkerArray($subpartArray['downloads'], $markerArray);
 
             }
 
         }
 
-        return $this->cObj->substituteSubpart($this->template, '###DOWNLOADS###', $content, true);
+        return $templateService->substituteSubpart($this->template, '###DOWNLOADS###', $content, true);
 
     }
 
