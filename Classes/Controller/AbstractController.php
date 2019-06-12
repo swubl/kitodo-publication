@@ -50,6 +50,10 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
             } else {
                 $view->assign('client', $client);
             }
+        } else {
+            // if manager is in the frontend
+            $client = $this->clientRepository->findAll()->current();
+            $view->assign('client', $client);
         }
     }
 
