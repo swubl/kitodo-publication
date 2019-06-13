@@ -32,7 +32,7 @@
             <f:if condition="{fieldItem.inputField}!=4">
                 <f:then>
                     <div class="form-container {f:if(condition: '{fieldItem.dataType} == \'DATE\'', then: 'hasDatepicker', else: '')}">
-                        <f:if condition="{eww:IsElementAllowed(condition:'{fieldItem.backendOnly}')}">
+                        <f:if condition="{eww:IsElementAllowed(condition:'{fieldItem.backendOnly}', role:'{settings.security.role.backoffice_user}')}">
                             <f:then>
                                 <f:render partial="DocumentForm/Field"
                                           arguments="{formPageUid: formPageUid,formGroupUid: formGroupUid,groupIndex: groupIndex,formField: formField,fieldIndex: fieldItemIterator.index,fieldItem: fieldItem,countries: countries}"/>
@@ -41,7 +41,7 @@
                                         <button type="submit"
                                                 title="{f:translate(key: 'form_button.add_item', arguments: {0: fieldItem.displayName})}"
                                                 name="add_field" class="btn btn-default add_field" data-field="{fieldItem.uid}"
-                                                data-ajax="{f:uri.action(action:'field',controller:'AjaxDocumentForm',pageType:110124,arguments:{pageUid: formPageUid,groupUid: formGroupUid,groupIndex: groupIndex,fieldUid: fieldItem.uid})}"
+                                                data-ajax="{f:uri.action(action:'field',controller:'AjaxDocumentForm',pageType:settings.ajaxTypeNum,arguments:{pageUid: formPageUid,groupUid: formGroupUid,groupIndex: groupIndex,fieldUid: fieldItem.uid})}"
                                                 data-index="{fieldItemIterator.index}">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <span class="sr-only">{f:translate(key: 'form_button.add_item', arguments: {0: fieldItem.displayName})}</span>

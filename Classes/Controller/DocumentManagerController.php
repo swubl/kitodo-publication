@@ -468,4 +468,14 @@ class DocumentManagerController extends \EWW\Dpf\Controller\AbstractController
         );
 
     }
+
+    public function initializeAction()
+    {
+        if (!\EWW\Dpf\Security\Security::isAllowed(TRUE, $this->settings['security']['role']['backoffice_user'])) {
+            throw new \Exception("Access denied!");
+        }
+
+        parent::initializeAction();
+    }
+
 }

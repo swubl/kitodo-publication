@@ -19,7 +19,7 @@
 <div class="tx-dpf-tab-container">
     <ul class="tx-dpf-tabs nav nav-tabs">
         <f:for each="{documentForm.items}" as="formPage" iteration="pageIterator">
-            <f:if condition="{eww:IsElementAllowed(condition:'{formPage.0.backendOnly}')}">
+            <f:if condition="{eww:IsElementAllowed(condition:'{formPage.0.backendOnly}', role:'{settings.security.role.backoffice_user}')}">
                 <f:then>
                     <li class="{f:if(condition: '{pageIterator.index}==0', then: 'active', else:'')}">
                         <a href="#tab-{pageIterator.cycle}" data-toggle="tab">{formPage.0.displayName}</a></li>
@@ -32,14 +32,14 @@
 
 <div class="tab-content">
     <f:for each="{documentForm.items}" as="formPage" iteration="pageIterator">
-        <f:if condition="{eww:IsElementAllowed(condition:'{formPage.0.backendOnly}')}">
+        <f:if condition="{eww:IsElementAllowed(condition:'{formPage.0.backendOnly}', role:'{settings.security.role.backoffice_user}')}">
             <f:then>
                 <div id="tab-{pageIterator.cycle}"
                      class="fs_page tab-pane {f:if(condition: '{pageIterator.index}==0', then: 'active', else:'')}"
                      data-page="{formPage.0.uid}">
                     <f:for each="{formPage.0.items}" as="formGroup" iteration="groupIterator">
                         <f:for each="{formGroup}" as="groupItem" iteration="groupItemIterator">
-                            <f:if condition="{eww:IsElementAllowed(condition:'{groupItem.backendOnly}')}">
+                            <f:if condition="{eww:IsElementAllowed(condition:'{groupItem.backendOnly}', role:'{settings.security.role.backoffice_user}')}">
                                 <f:then>
                                     <f:render partial="DocumentForm/Group"
                                               arguments="{formPageUid:formPage.0.uid,formGroupUid:groupItem.uid,formGroupDisplayName:groupItem.displayName,groupItem:groupItem,groupIndex:groupItemIterator.index}"/>
@@ -48,7 +48,7 @@
                                             <button type="submit" name="add_group"
                                                     class="btn btn-xs btn-default add_group"
                                                     data-group="{groupItem.uid}"
-                                                    data-ajax="{f:uri.action(action:'group',controller:'AjaxDocumentForm',pageType:110124,arguments:{pageUid:formPage.0.uid,groupUid:groupItem.uid})}"
+                                                    data-ajax="{f:uri.action(action:'group',controller:'AjaxDocumentForm',pageType:settings.ajaxTypeNum,arguments:{pageUid:formPage.0.uid,groupUid:groupItem.uid})}"
                                                     data-index="{groupItemIterator.index}">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 {f:translate(key: 'form_button.add_item', arguments: {0:
@@ -71,7 +71,7 @@
         <f:render partial="DocumentForm/SecondaryFileGroup" arguments="{files:documentForm.secondaryFiles}"/>
         <button type="submit" name="add_file_group" class="btn btn-xs btn-default add_file_group"
                 data-group="file-upload"
-                data-ajax="{f:uri.action(action:'secondaryUpload',controller:'AjaxDocumentForm',pageType:110124)}"
+                data-ajax="{f:uri.action(action:'secondaryUpload',controller:'AjaxDocumentForm',pageType:settings.ajaxTypeNum)}"
                 data-index="0">
             <span class="glyphicon glyphicon-plus"></span>
             {f:translate(key: 'form_button.addFile')}

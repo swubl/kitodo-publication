@@ -39,9 +39,6 @@ class DocumentFormManagerController extends AbstractDocumentFormController
      */
     public function deleteAction($documentData)
     {
-        if (!$GLOBALS['BE_USER']) {
-            throw new \Exception('Access denied');
-        }
 
         try {
 
@@ -126,6 +123,15 @@ class DocumentFormManagerController extends AbstractDocumentFormController
     {
         parent::createAction($newDocumentForm);
         $this->redirectToList('CREATE_OK');
+    }
+
+    public function initializeAction()
+    {
+        if (!\EWW\Dpf\Security\Security::hasFrontendRole(TRUE, $this->settings['security']['role']['backoffice_user'])) {
+           throw new \Exception("Access denied!");
+        }
+
+        parent::initializeAction();
     }
 
 }

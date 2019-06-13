@@ -56,6 +56,13 @@ plugin.tx_dpf {
 			searchResultsPid = {$plugin.tx_dpf.settings.searchResultsPid}
 
 			afterDocSavedRedirectPage =
+
+			security {
+				role {
+					backoffice_user = {$plugin.tx_dpf.settings.security.role.backoffice_user}
+					frontend_user = {$plugin.tx_dpf.settings.security.role.frontend_user}
+				}
+			}
         }
 }
 
@@ -152,7 +159,33 @@ ajax_page {
     no_cache = 1
     debug = 0
   }
+}
 
+plugin.tx_dpf {
+	settings {
+		ajaxTypeNum = 110124
+	}
+}
+
+
+ajax_documentmanager = PAGE
+ajax_documentmanager {
+	typeNum = 110125
+	10 < tt_content.list.20.dpf_documentmanager
+	config{
+		disableAllHeaderCode = 1
+		admPanel = 0
+		xhtml_cleaning = 0
+		no_cache = 1
+		debug = 0
+	}
+}
+
+
+plugin.tx_dpf_documentmanager {
+	settings {
+		ajaxTypeNum = 110125
+	}
 }
 
 

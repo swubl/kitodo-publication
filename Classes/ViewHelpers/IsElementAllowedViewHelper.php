@@ -20,14 +20,12 @@ class IsElementAllowedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
     /**
      *
      * @param boolean $condition
+     * @param string $role
      * @return string
      */
-    public function render($condition)
+    public function render($condition, $role)
     {
-        if ((TYPO3_MODE === 'BE') || !$condition) {
-            return TRUE;
-        }
-        return FALSE;
+        return \EWW\Dpf\Security\Security::isAllowed($condition, $role);
     }
 
 }

@@ -41,7 +41,14 @@ plugin.tx_dpf {
 			landingPage =
 			# cat=plugin.tx_dpf/link; type=int+; label=PID of the search results page
 			searchResultsPid =
-        }
+
+			# cat=plugin.tx_dpf/link; type=int+; label=backoffice user role
+			security.role.backoffice_user = KITODO_BACKOFFICE_USER
+
+			# cat=plugin.tx_dpf/link; type=int+; label=frontend user role
+			security.role.frontend_user = KITODO_FRONTEND_USER
+
+		}
 }
 
 module.tx_dpf {
