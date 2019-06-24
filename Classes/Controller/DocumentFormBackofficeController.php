@@ -17,7 +17,7 @@ namespace EWW\Dpf\Controller;
 use EWW\Dpf\Services\Transfer\ElasticsearchRepository;
 use EWW\Dpf\Exceptions\DPFExceptionInterface;
 
-class DocumentFormManagerController extends AbstractDocumentFormController
+class DocumentFormBackofficeController extends AbstractDocumentFormController
 {
 
     public function __construct()
@@ -28,7 +28,7 @@ class DocumentFormManagerController extends AbstractDocumentFormController
 
     protected function redirectToList($message = null)
     {
-        $this->redirect('list', 'DocumentManager', null, array('message' => $message));
+        $this->redirect('list', 'DocumentBackoffice', null, array('message' => $message));
     }
 
     /**

@@ -25,7 +25,7 @@ use EWW\Dpf\Exceptions\DPFExceptionInterface;
 /**
  * SearchController
  */
-class SearchManagerController extends \EWW\Dpf\Controller\AbstractSearchController
+class SearchBackofficeController extends \EWW\Dpf\Controller\AbstractSearchController
 {
 
     /**
@@ -364,7 +364,7 @@ class SearchManagerController extends \EWW\Dpf\Controller\AbstractSearchControll
                 true
             );
 
-            $this->redirect('list', 'DocumentManager', null);
+            $this->redirect('list', 'DocumentBackoffice', null);
         }
 
     }

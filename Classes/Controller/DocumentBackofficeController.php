@@ -27,7 +27,7 @@ use EWW\Dpf\Exceptions\DPFExceptionInterface;
 /**
  * DocumentController
  */
-class DocumentManagerController extends \EWW\Dpf\Controller\AbstractController
+class DocumentBackofficeController extends \EWW\Dpf\Controller\AbstractController
 {
 
     /**

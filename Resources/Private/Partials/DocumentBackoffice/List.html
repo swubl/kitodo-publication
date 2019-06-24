@@ -15,12 +15,12 @@
 {namespace dpf = EWW\Dpf\ViewHelpers}
 
 <div class="btn-group" role="group">
-    <f:link.action action="listNew" controller="DocumentManager"
-                   class="btn btn-default btn-sm {dpf:activeManagerMenu(controllerName:'DocumentManager', actionName:'listNew')}">
+    <f:link.action action="listNew" controller="DocumentBackoffice"
+                   class="btn btn-default btn-sm {dpf:activeManagerMenu(controllerName:'DocumentBackoffice', actionName:'listNew')}">
         {f:translate(key: 'manager.document.state.new')}
     </f:link.action>
-    <f:link.action action="listEdit" controller="DocumentManager"
-                   class="btn btn-default btn-sm {dpf:activeManagerMenu(controllerName:'DocumentManager', actionName:'listEdit')}">
+    <f:link.action action="listEdit" controller="DocumentBackoffice"
+                   class="btn btn-default btn-sm {dpf:activeManagerMenu(controllerName:'DocumentBackoffice', actionName:'listEdit')}">
         {f:translate(key: 'manager.document.state.inProgress')}
     </f:link.action>
 </div>
@@ -41,7 +41,7 @@
     <f:for each="{documents}" as="document">
         <tr>
             <td>
-                <f:link.action action="edit" controller="DocumentFormManager" arguments="{document : document}">
+                <f:link.action action="edit" controller="DocumentFormBackoffice" arguments="{document : document}">
                     {document.title}
                 </f:link.action>
             </td>
@@ -75,7 +75,7 @@
             </td>
             <td class="table_col_function">
 
-                <f:link.action action="doubletCheck" controller="SearchManager" arguments="{document : document}"
+                <f:link.action action="doubletCheck" controller="SearchBackoffice" arguments="{document : document}"
                                class="btn btn-xs btn-default">{f:translate(key: 'manager.doublet')}
                 </f:link.action>
 

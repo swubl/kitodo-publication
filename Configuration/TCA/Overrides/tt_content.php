@@ -36,8 +36,8 @@ if (!defined('TYPO3_MODE')) {
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
     'EWW.Dpf',
-    'DocumentManager',
-    'DPF: DocumentManager'
+    'Backoffice',
+    'DPF: Backoffice'
 );
 
 

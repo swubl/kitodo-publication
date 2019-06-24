@@ -168,10 +168,10 @@ plugin.tx_dpf {
 }
 
 
-ajax_documentmanager = PAGE
-ajax_documentmanager {
+ajax_backoffice = PAGE
+ajax_backoffice {
 	typeNum = 110125
-	10 < tt_content.list.20.dpf_documentmanager
+	10 < tt_content.list.20.dpf_backoffice
 	config{
 		disableAllHeaderCode = 1
 		admPanel = 0
@@ -182,7 +182,7 @@ ajax_documentmanager {
 }
 
 
-plugin.tx_dpf_documentmanager {
+plugin.tx_dpf_backoffice {
 	settings {
 		ajaxTypeNum = 110125
 	}

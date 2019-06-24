@@ -12,16 +12,16 @@
     The TYPO3 project - inspiring people to share!
     -->
 </f:comment>
-<f:layout name="Manager"/>
+<f:layout name="Backoffice"/>
 
 <f:section name="main">
-    <h4>{f:translate(key: 'manager.deleteConfirmMessageHeader')}</h4>
-    {f:translate(key: 'manager.deleteConfirmMessage', arguments: {0: document.title})}
+    <h4>{f:translate(key: 'manager.activateConfirmMessageHeader')}</h4>
+    {f:translate(key: 'manager.activateConfirmMessage', arguments: {0: document.title})}
     <br/><br/>
-    <f:link.action action="delete" controller="DocumentManager" arguments="{document : document}" class="btn btn-danger">
+    <f:link.action action="activate" controller="DocumentBackoffice" arguments="{document : document}" class="btn btn-danger">
         {f:translate(key: 'manager.releaseConfirmYes')}
     </f:link.action>
-    <f:link.action action="list" controller="DocumentManager" class="btn btn-primary">{f:translate(key:
+    <f:link.action action="list" controller="DocumentBackoffice" class="btn btn-primary">{f:translate(key:
         'manager.releaseConfirmNo')}
     </f:link.action>
 </f:section>

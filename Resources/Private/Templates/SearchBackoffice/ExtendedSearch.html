@@ -14,11 +14,11 @@
 </f:comment>
 {namespace dpf = EWW\Dpf\ViewHelpers}
 
-<f:layout name="Manager"/>
+<f:layout name="Backoffice"/>
 
 <f:section name="main">
 
-    <f:render partial="SearchManager/SearchControl" arguments="{searchList: searchList}"/>
+    <f:render partial="SearchBackoffice/SearchControl" arguments="{searchList: searchList}"/>
 
     <div class="searchForm">
         <f:form action="search" name="query" class="form-inline">
@@ -78,9 +78,9 @@
         </f:form>
     </div>
 
-    <f:render partial="SearchManager/ResultList" arguments="{searchList: searchList, alreadyImported: alreadyImported}"/>
+    <f:render partial="SearchBackoffice/ResultList" arguments="{searchList: searchList, alreadyImported: alreadyImported}"/>
     <center>
-        <f:link.action id="next" controller="SearchManager" action="nextResults" additionalAttributes="{data-result-count: resultCount}">{f:translate(key: 'search.resultList.more')}
+        <f:link.action id="next" controller="SearchBackoffice" action="nextResults" additionalAttributes="{data-result-count: resultCount}">{f:translate(key: 'search.resultList.more')}
         </f:link.action>
     </center>
 </f:section>
