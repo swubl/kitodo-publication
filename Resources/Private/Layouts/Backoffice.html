@@ -15,10 +15,10 @@
 
 {namespace dpf=EWW\Dpf\ViewHelpers}
 
-   <div class="tx-dpf" data-language="{dpf:language()}">
+<link href="{f:uri.resource(path:'CSS/backoffice-form.css')}" rel="stylesheet" />
+<link href="{f:uri.resource(path:'CSS/backoffice.css')}" rel="stylesheet" />
 
+<div class="tx-dpf" data-language="{dpf:language()}">
     <f:render partial="Layouts/Backoffice" arguments="{_all}" />
-
     <f:render section="main"/>
-
 </div>
