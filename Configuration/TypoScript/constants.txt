@@ -43,10 +43,10 @@ plugin.tx_dpf {
 			searchResultsPid =
 
 			# cat=plugin.tx_dpf/link; type=string; label=backoffice user role
-			security.role.backoffice_user = KITODO_BACKOFFICE_USER
+			security.role.backoffice_user = 1
 
 			# cat=plugin.tx_dpf/link; type=string; label=frontend user role
-			security.role.frontend_user = KITODO_FRONTEND_USER
+			security.role.frontend_user = 1
 
 		}
 }

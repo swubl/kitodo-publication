@@ -17,6 +17,7 @@ namespace EWW\Dpf\Security;
 class Security
 {
     public static function isAllowed($backofficeOnly, $role) {
+
         if ($backofficeOnly) {
             return
                 //((TYPO3_MODE === 'BE') && \EWW\Dpf\Security\Security::hasBackendRole($role))
@@ -28,15 +29,30 @@ class Security
     }
 
     public static function hasFrontendRole($role = NULL) {
+
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( \TYPO3\CMS\Extbase\Object\ObjectManager::class);
+        $frontendUserGroupRepository = $objectManager->get(\EWW\Dpf\Domain\Repository\FrontendUserGroupRepository::class);
+
+        $kitotoRoleIds = array();
+        if (is_array($GLOBALS['TSFE']->fe_user->groupData['uid'])) {
+            foreach ($GLOBALS['TSFE']->fe_user->groupData['uid'] as $groupUid) {
+                $group = $frontendUserGroupRepository->findByUid($groupUid);
+                if (is_object($group)) {
+                    $kitotoRoleIds[] = $group->getKitodoRole();
+                }
+            }
+        }
+        
         // Taken from viewhelper: IfHasRoleViewHelper
         // typo2/sysext/fluid/Classes/ViewHelpers/Security/IfHasRoleViewhelper.php
         if (!isset($GLOBALS['TSFE']) || !$GLOBALS['TSFE']->loginUser) {
             return false;
         }
         if (is_numeric($role)) {
-            return is_array($GLOBALS['TSFE']->fe_user->groupData['uid']) && in_array($role, $GLOBALS['TSFE']->fe_user->groupData['uid']);
+            return in_array($role, $kitotoRoleIds);
         } else {
-            return is_array($GLOBALS['TSFE']->fe_user->groupData['title']) && in_array($role, $GLOBALS['TSFE']->fe_user->groupData['title']);
+            return false;
+            //return is_array($GLOBALS['TSFE']->fe_user->groupData['title']) && in_array($role, $GLOBALS['TSFE']->fe_user->groupData['title']);
         }
     }
 

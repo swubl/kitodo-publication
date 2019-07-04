@@ -67,6 +67,25 @@ if (TYPO3_MODE === 'BE') {
             'navigationComponentId' => 'typo3-pagetree',
         )
     );
+
+
+
+        // Module System > Backend Users
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'EWW.' . $_EXTKEY,
+            'qucosaMain',
+            'User',
+            'top',
+            array(
+                'User' => 'index',
+            ),
+            array(
+                'access' => 'admin',
+                'icon' => 'EXT:beuser/Resources/Public/Icons/module-beuser.svg',
+                'labels' => 'User'
+            )
+        );
+
     
 }
 

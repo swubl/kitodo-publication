@@ -516,3 +516,10 @@ CREATE TABLE tx_dpf_domain_model_processnumber (
   KEY language (l10n_parent,sys_language_uid)
 
 ) ENGINE=InnoDB;
+
+#
+# Table extension structure for table 'fe_groups'
+#
+CREATE TABLE fe_groups (
+        kitodo_role int(11) DEFAULT '0' NOT NULL,
+);
