@@ -72,7 +72,7 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
     public function nextResultsAction()
     {
         try {
-            $sessionVars = $GLOBALS["BE_USER"]->getSessionData("tx_dpf");
+            $sessionVars = $GLOBALS["TSFE"]->getSessionData("tx_dpf");
             if (!$sessionVars['resultCount']) {
                 // set number of results in session
                 $sessionVars['resultCount'] = self::NEXT_RESULT_COUNT;
@@ -80,7 +80,7 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
                 $resultCount                = $sessionVars['resultCount'];
                 $sessionVars['resultCount'] = $resultCount + self::NEXT_RESULT_COUNT;
             }
-            $GLOBALS['BE_USER']->setAndSaveSessionData('tx_dpf', $sessionVars);
+            $GLOBALS['TSFE']->setAndSaveSessionData('tx_dpf', $sessionVars);
 
             $query = $sessionVars['query'];
 
@@ -179,9 +179,9 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
             $args = $this->request->getArguments();
 
             // reset session pagination
-            $sessionVars = $GLOBALS['BE_USER']->getSessionData('tx_dpf');
+            $sessionVars = $this->getSessionData('tx_dpf');
             $sessionVars['resultCount'] = self::RESULT_COUNT;
-            $GLOBALS['BE_USER']->setAndSaveSessionData('tx_dpf', $sessionVars);
+            $this->setSessionData('tx_dpf', $sessionVars);
 
             $extSearch = ($args['query']['extSearch']) ? true : false;
 
@@ -199,11 +199,11 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
             if ($query) {
                 $query['body']['from'] = '0';
                 $query['body']['size'] = '' . self::RESULT_COUNT . '';
-                $sessionVars = $GLOBALS["BE_USER"]->getSessionData("tx_dpf");
+                $sessionVars = $this->getSessionData("tx_dpf");
                 $sessionVars['query'] = $query;
-                $GLOBALS['BE_USER']->setAndSaveSessionData('tx_dpf', $sessionVars);
+                $this->setSessionData('tx_dpf', $sessionVars);
             } else {
-                $sessionVars = $GLOBALS['BE_USER']->getSessionData('tx_dpf');
+                $sessionVars = $this->getSessionData('tx_dpf');
                 $query = $sessionVars['query'];
             }
 
@@ -252,12 +252,13 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
         $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
         $documentTransferManager->setRemoteRepository($remoteRepository);
 
-        $args[] = $documentObjectIdentifier;
+        $args = array();
 
         try {
             if ($documentTransferManager->retrieve($documentObjectIdentifier)) {
                 $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_retrieve.success';
                 $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+                $args[] = $documentObjectIdentifier;
             }
         } catch (\Exception $exception) {
             $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
@@ -271,7 +272,7 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
 
         // Show success or failure of the action in a flash message
 
-        $message = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, 'dpf');
+        $message = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, 'dpf', $args);
 
         $this->addFlashMessage(
             $message,
