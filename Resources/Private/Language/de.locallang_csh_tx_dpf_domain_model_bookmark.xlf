@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-08-19T16:40:00Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+		<trans-unit id="authors.description" approved="yes">
+			<source>authors</source>
+			<target>Autoren</target>
+		</trans-unit>
+		<trans-unit id="date_issued.description" approved="yes">
+			<source>date issued</source>
+			<target>Ausstellungsdatum</target>
+		</trans-unit>
+		<trans-unit id="document_type.description" approved="yes">
+			<source>documentType</source>
+			<target>Dokumenttyp</target>
+		</trans-unit>
+		<trans-unit id="object_identifier.description" approved="yes">
+			<source>objectIdentifier</source>
+			<target>Objektkennung</target>
+		</trans-unit>
+		<trans-unit id="remote_status.description" approved="yes">
+			<source>Remote Status</source>
+			<target>Entfernter Status</target>
+		</trans-unit>
+		<trans-unit id="title.description" approved="yes">
+			<source>title</source>
+			<target>Titel</target>
+		</trans-unit>
+		<trans-unit id="owner.description" approved="yes">
+			<source>Owner</source>
+			<target>Besitzer</target>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>

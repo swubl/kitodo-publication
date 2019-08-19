@@ -113,8 +113,12 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function myPublicationsAction()
     {
-        $ownerFilter = $this->authorizationChecker->getUser()->getUid();
-        $documents = $this->documentRepository->findAllFiltered($ownerFilter);
+        $ownerUid = $this->authorizationChecker->getUser()->getUid();
+
+        $documents = $this->documentRepository->findAllFiltered($ownerUid);
+
+        $bookmarks = $this->documentRepository->findAllByOwnerUid($ownerUid);
+
 
         if ($this->request->hasArgument('message')) {
             $this->view->assign('message', $this->request->getArgument('message'));

@@ -18,7 +18,7 @@ if (!defined('TYPO3_MODE')) {
 
 return array(
     'ctrl' => array(
-        'title'                    => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document',
+        'title'                    => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_bookmark',
         'label'                    => 'title',
         'tstamp'                   => 'tstamp',
         'crdate'                   => 'crdate',
@@ -33,19 +33,16 @@ return array(
             'starttime' => 'starttime',
             'endtime'   => 'endtime',
         ),
-        'searchFields'             => 'title, authors, xml_data, slub_info_data, document_type, date_issued,
-        process_number, valid, changed, local_status, remote_status, reserved_object_identifier, object_identifier, transfer_status, file, owner',
+        'searchFields'             => 'title, authors, document_type, date_issued, remote_status, object_identifier, owner',
         'iconfile'                 => 'EXT:dpf/Resources/Public/Icons/tx_dpf_domain_model_document.gif',
     ),
     'interface' => array(
         'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden,
-        title, authors, xml_data, slub_info_data, document_type, date_issued, process_number, valid, changed,
-        local_status, remote_statusremote_status, reserved_object_identifier, object_identifier, transfer_status, file, owner',
+        title, authors, document_type, date_issued, remote_status, object_identifier, owner',
     ),
     'types'     => array(
         '1' => array('showitem' => 'sys_language_uid,l10n_parent,l10n_diffsource,hidden,--palette--;;1, 
-        title, authors, xml_data, slub_info_data, document_type, date_issued, process_number, valid, changed,
-        local_status, remote_status, reserved_object_identifier, object_identifier, transfer_status, file, owner,
+        title, authors, document_type, date_issued, remote_status, object_identifier, owner,
         --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'palettes'  => array(
@@ -156,26 +153,6 @@ return array(
             ),
         ),
 
-        'xml_data'                   => array(
-            'exclude' => 1,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.xml_data',
-            'config'  => array(
-                'type' => 'text',
-                'cols' => 40,
-                'rows' => 15,
-                'eval' => 'trim',
-            ),
-        ),
-        'slub_info_data'             => array(
-            'exclude' => 1,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.slub_info_data',
-            'config'  => array(
-                'type' => 'text',
-                'cols' => 40,
-                'rows' => 15,
-                'eval' => 'trim',
-            ),
-        ),
         'document_type'              => array(
             'exclude' => 1,
             'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.document_type',
@@ -210,49 +187,9 @@ return array(
             ),
         ),
 
-        'transfer_status'            => array(
-            'exclude' => 0,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.transfer_status',
-            'config'  => array(
-                'type' => 'input',
-                'size' => '30',
-                'eval' => 'trim',
-            ),
-        ),
-
         'object_identifier'          => array(
             'exclude' => 0,
             'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.object_identifier',
-            'config'  => array(
-                'type' => 'input',
-                'size' => '30',
-                'eval' => 'trim',
-            ),
-        ),
-
-        'reserved_object_identifier' => array(
-            'exclude' => 0,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.reserved_object_identifier',
-            'config'  => array(
-                'type' => 'input',
-                'size' => '30',
-                'eval' => 'trim',
-            ),
-        ),
-
-        'process_number' => array(
-            'exclude' => 0,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.process_number',
-            'config'  => array(
-                'type' => 'input',
-                'size' => '30',
-                'eval' => 'trim',
-            ),
-        ),
-
-        'local_status'                      => array(
-            'exclude' => 0,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.local_status',
             'config'  => array(
                 'type' => 'input',
                 'size' => '30',
@@ -270,26 +207,6 @@ return array(
             ),
         ),
 
-        'changed'                    => array(
-            'exclude'   => 1,
-            'l10n_mode' => 'exclude',
-            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.changed',
-            'config'    => array(
-                'type'    => 'check',
-                'default' => 0,
-            ),
-        ),
-
-        'valid'                      => array(
-            'exclude'   => 1,
-            'l10n_mode' => 'exclude',
-            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.valid',
-            'config'    => array(
-                'type'    => 'check',
-                'default' => 0,
-            ),
-        ),
-
         'date_issued'                => array(
             'exclude' => 1,
             'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.date_issued',
@@ -300,31 +217,9 @@ return array(
             ),
         ),
 
-        'file'                       => array(
-            'exclude' => 1,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.file',
-            'config'  => array(
-                'type'          => 'inline',
-                'foreign_table' => 'tx_dpf_domain_model_file',
-                'foreign_field' => 'document',
-                'behaviour'     => array(
-                    'disableMovingChildrenWithParent' => 1,
-                ),
-                'maxitems'      => 9999,
-                'appearance'    => array(
-                    'collapseAll'                     => 0,
-                    'levelLinksPosition'              => 'top',
-                    'showSynchronizationLink'         => 1,
-                    'showPossibleLocalizationRecords' => 1,
-                    'showAllLocalizationLink'         => 1,
-                ),
-            ),
-
-        ),
-
         'owner'              => array(
             'exclude' => 1,
-            'label'   => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_document.owner',
+            'label'   => 'Owner',
             'config'  => array(
                 'type'          => 'select',
                 'items' => array (

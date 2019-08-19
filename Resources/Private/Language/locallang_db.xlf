@@ -134,6 +134,33 @@
 		<trans-unit id="tx_dpf_domain_model_document.file">
 			<source>File</source>
 		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_document.owner">
+			<source>Owner</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark">
+			<source>Bookmark</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.authors">
+			<source>Authors</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.date_issued">
+			<source>Date Issued</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.document_type">
+			<source>Document Type</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.object_identifier">
+			<source>Object Identifier</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.remote_status">
+			<source>Remote Status</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.title">
+			<source>Title</source>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.owner">
+			<source>Owner</source>
+		</trans-unit>
 		<trans-unit id="tx_dpf_domain_model_documenttransferlog">
 			<source>Document Transfer Log</source>
 		</trans-unit>

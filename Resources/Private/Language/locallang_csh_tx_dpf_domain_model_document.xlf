@@ -50,6 +50,9 @@
         <trans-unit id="file.description">
             <source>file</source>
         </trans-unit>
+		<trans-unit id="owner.description">
+			<source>Owner</source>
+		</trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -165,17 +165,53 @@
 			<source>Xml Data</source>
 			<target>Xml Daten</target>
 		</trans-unit>
-		<trans-unit id="tx_dpf_domain_model_document.valid">
+		<trans-unit id="tx_dpf_domain_model_document.valid" approved="yes">
 			<source>Valid</source>
             <target>Gültig</target>
 		</trans-unit>
-		<trans-unit id="tx_dpf_domain_model_document.changed">
+		<trans-unit id="tx_dpf_domain_model_document.changed" approved="yes">
 			<source>Changed</source>
             <target>Geändert</target>
 		</trans-unit>
-		<trans-unit id="tx_dpf_domain_model_document.file">
+		<trans-unit id="tx_dpf_domain_model_document.file" approved="yes">
 			<source>File</source>
 			<target>Datei</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_document.owner" approved="yes">
+			<source>Owner</source>
+			<target>Besitzer</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark" approved="yes">
+			<source>Bookmark</source>
+			<target>Bookmark</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.authors" approved="yes">
+			<source>Authors</source>
+			<target>Autoren</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.date_issued" approved="yes">
+			<source>Date Issued</source>
+			<target>Ausstellungsdatum</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.document_type" approved="yes">
+			<source>Document Type</source>
+			<target>Dokumenttyp</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.object_identifier" approved="yes">
+			<source>Object Identifier</source>
+			<target>Objektkennung</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.remote_status" approved="yes">
+			<source>Remote Status</source>
+			<target>Entfernter Status</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.title" approved="yes">
+			<source>Title</source>
+			<target>Titel</target>
+		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_bookmark.owner" approved="yes">
+			<source>Owner</source>
+			<target>Besitzer</target>
 		</trans-unit>
 		<trans-unit id="tx_dpf_domain_model_documenttransferlog" approved="yes">
 			<source>Document Transfer Log</source>

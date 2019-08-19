@@ -65,6 +65,10 @@
             <source>file</source>
             <target>Datei</target>
         </trans-unit>
+		<trans-unit id="owner.description" approved="yes">
+			<source>Owner</source>
+			<target>Besitzer</target>
+		</trans-unit>
 		</body>
 	</file>
 </xliff>

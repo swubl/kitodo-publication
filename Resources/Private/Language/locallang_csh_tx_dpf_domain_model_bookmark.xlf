@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2019-08-19T16:40:00Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+		<trans-unit id="authors.description">
+			<source>Authors</source>
+		</trans-unit>
+		<trans-unit id="date_issued.description">
+			<source>date issued</source>
+		</trans-unit>
+		<trans-unit id="document_type.description">
+			<source>documentType</source>
+		</trans-unit>
+		<trans-unit id="object_identifier.description">
+			<source>objectIdentifier</source>
+		</trans-unit>
+		<trans-unit id="remote_status.description" approved="yes">
+			<source>Remote Status</source>
+		</trans-unit>
+		<trans-unit id="title.description">
+			<source>title</source>
+		</trans-unit>
+		<trans-unit id="owner.description" approved="yes">
+			<source>Owner</source>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>
