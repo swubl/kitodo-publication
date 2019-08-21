@@ -170,6 +170,9 @@
 		<trans-unit id="tx_dpf_domain_model_documenttype.virtual">
 			<source>Virtual</source>
 		</trans-unit>
+		<trans-unit id="tx_dpf_domain_model_documenttype.transformation_file" approved="yes">
+            <source>Transformation file</source>
+        </trans-unit>
 		<trans-unit id="tx_dpf_domain_model_file">
 			<source>File</source>
 		</trans-unit>
@@ -389,6 +392,18 @@
 		<trans-unit id="tx_dpf_domain_model_feusergroup.kitodo_role_librarian">
 			<source>Librarian</source>
 		</trans-unit>
+        <trans-unit id="tx_dpf_domain_model_transformationfile" approved="yes">
+            <source>Transformation file</source>
+        </trans-unit>
+        <trans-unit id="tx_dpf_domain_model_transformationfile.title" approved="yes">
+            <source>title</source>
+        </trans-unit>
+        <trans-unit id="tx_dpf_domain_model_transformationfile.label" approved="yes">
+            <source>label</source>
+        </trans-unit>
+        <trans-unit id="tx_dpf_domain_model_transformationfile.newrelation" approved="yes">
+            <source>New relation</source>
+        </trans-unit>
 		</body>
 	</file>
 </xliff>

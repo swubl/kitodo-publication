@@ -50,6 +50,12 @@ class DocumentType extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $metadataPage = null;
 
     /**
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\EWW\Dpf\Domain\Model\TransformationFile>
+     * @cascade remove
+     */
+    protected $transformationFile = null;
+
+    /**
      * __construct
      */
     public function __construct()
@@ -183,5 +189,23 @@ class DocumentType extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     {
         $this->virtual = $virtual;
     }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\EWW\Dpf\Domain\Model\TransformationFile> $transformationFile
+     */
+    public function getTransformationFile()
+    {
+        return $this->transformationFile;
+    }
+
+    /**
+     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\EWW\Dpf\Domain\Model\TransformationFile> $transformationFile
+     */
+    public function setTransformationFile(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $transformationFile)
+    {
+        $this->transformationFile = $transformationFile;
+    }
+
+
 
 }
