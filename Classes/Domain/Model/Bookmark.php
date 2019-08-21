@@ -20,7 +20,7 @@ use EWW\Dpf\Domain\Model\RemoteDocumentStatus;
 /**
  * Document
  */
-class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Bookmark extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
     /**

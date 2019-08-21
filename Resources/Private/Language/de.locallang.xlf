@@ -359,6 +359,10 @@
 			<source>Get</source>
 			<target>Get</target>
 		</trans-unit>
+		<trans-unit id="manager.bookmark" approved="yes">
+			<source>Bookmark</source>
+			<target>Bookmark</target>
+		</trans-unit>
 		<trans-unit id="manager.inactivate" approved="yes">
 			<source>inactivate</source>
 			<target>inaktiv</target>

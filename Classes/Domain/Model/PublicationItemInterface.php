@@ -16,6 +16,7 @@ namespace EWW\Dpf\Domain\Model;
 
 interface PublicationItemInterface
 {
+
     /**
      * @return string
      */

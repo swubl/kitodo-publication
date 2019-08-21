@@ -269,6 +269,9 @@
 		<trans-unit id="manager.get">
 			<source>Get</source>
 		</trans-unit>
+		<trans-unit id="manager.bookmark">
+			<source>Bookmark</source>
+		</trans-unit>
 		<trans-unit id="manager.inactivate">
 			<source>inactivate</source>
 		</trans-unit>

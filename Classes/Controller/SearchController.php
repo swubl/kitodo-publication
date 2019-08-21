@@ -37,6 +37,14 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
     protected $documentRepository = null;
 
     /**
+     * bookmarkRepository
+     *
+     * @var \EWW\Dpf\Domain\Repository\BookmarkRepository
+     * @inject
+     */
+    protected $bookmarkRepository = null;
+
+    /**
      * clientRepository
      *
      * @var \EWW\Dpf\Domain\Repository\ClientRepository

@@ -41,6 +41,14 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     protected $documentRepository = null;
 
     /**
+     * bookmarkRepository
+     *
+     * @var \EWW\Dpf\Domain\Repository\BookmarkRepository
+     * @inject
+     */
+    protected $bookmarkRepository = null;
+
+    /**
      * persistence manager
      *
      * @var \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
@@ -117,7 +125,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
         $documents = $this->documentRepository->findAllFiltered($ownerUid);
 
-        $bookmarks = $this->documentRepository->findAllByOwnerUid($ownerUid);
+        $bookmarks = $this->bookmarkRepository->findAllByOwnerUid($ownerUid);
 
 
         if ($this->request->hasArgument('message')) {
