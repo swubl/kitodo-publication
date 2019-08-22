@@ -14,8 +14,12 @@ namespace EWW\Dpf\Domain\Model;
  * The TYPO3 project - inspiring people to share!
  */
 
-interface PublicationItemInterface
+interface WorkspaceItemInterface
 {
+    /**
+     * @return string
+     */
+    public function getClassShortName();
 
     /**
      * @return string
@@ -52,8 +56,4 @@ interface PublicationItemInterface
      */
     public function getOwner();
 
-    /**
-     * @return string
-     */
-    public function getType();
 }

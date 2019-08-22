@@ -83,7 +83,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
             . 'listNew, listEdit, activate, inactivate, restore',
         'DocumentFormBackoffice'   => 'list, new, create, edit, update, delete, cancel',
         'AjaxDocumentForm' => 'group,fileGroup,field,deleteFile,primaryUpload,secondaryUpload,fillOut',
-        'Search'           => 'list, search, import, doubletCheck, nextResults, extendedSearch, latest',
+        'Search'           => 'list, search, import, bookmark, doubletCheck, nextResults, extendedSearch, latest',
         'Gnd'              => 'search',
     ),
     // non-cacheable actions
@@ -93,7 +93,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
             . 'listNew, listEdit, activate, inactivate, restore',
         'DocumentFormBackoffice'   => 'list, new, create, edit, update, delete, cancel',
         'AjaxDocumentForm' => 'group,fileGroup,field,deleteFile,primaryUpload,secondaryUpload,fillOut',
-        'Search'           => 'list, search, import, doubletCheck, nextResults, extendedSearch, latest',
+        'Search'           => 'list, search, import, bookmark, doubletCheck, nextResults, extendedSearch, latest',
         'Gnd'              => 'search',
     )
 );

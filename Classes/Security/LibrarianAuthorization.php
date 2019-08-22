@@ -48,6 +48,7 @@ class LibrarianAuthorization extends Authorization
             case 'EWW\Dpf\Controller\SearchController::nextResultsAction':
             case 'EWW\Dpf\Controller\SearchController::latestAction':
             case 'EWW\Dpf\Controller\SearchController::importAction':
+            case 'EWW\Dpf\Controller\SearchController::bookmarkAction':
             case 'EWW\Dpf\Controller\SearchController::updateIndexAction': {
                 return TRUE;
                 break;

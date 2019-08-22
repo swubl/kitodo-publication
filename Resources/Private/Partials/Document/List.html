@@ -60,6 +60,9 @@
             </td>
             <td>
                 {document.documentType.displayName}
+                <f:if condition="{document.classShortName} == 'Bookmark'">
+                    <i class="fas fa-bookmark"></i>
+                </f:if>
             </td>
             <td class="table_col_function">
                 <f:render partial="Document/ListItemActions" arguments="{document:document}"/>

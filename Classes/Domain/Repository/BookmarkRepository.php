@@ -22,7 +22,6 @@ use \EWW\Dpf\Domain\Model\Bookmark;
 class BookmarkRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
     /**
-     * /**
      * Finds all bookmarks filtered by owner uid.
      *
      * @param int $ownerUid
@@ -43,6 +42,20 @@ class BookmarkRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         }
 
         return $query->execute();
+    }
+
+
+    public function findObjectIdentifiersByOwnerUid($ownerUid = NULL)
+    {
+        $bookmarks = $this->findAllByOwnerUid($ownerUid);
+
+        $objectIdentifiers = array();
+
+        foreach ($bookmarks as $bookmark) {
+            $objectIdentifiers[] = $bookmark->getObjectIdentifier();
+        }
+
+        return $objectIdentifiers;
     }
 
 }

@@ -78,7 +78,9 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function listAction()
     {
-        $documents = $this->documentRepository->findAllFiltered(NULL);
+        $documents = $this->documentRepository->findAllFiltered(NULL)->toArray();
+        $bookmarks = $this->bookmarkRepository->findAllByOwnerUid($this->authorizationChecker->getUser()->getUid())->toArray();
+        $workspaceItems = array_merge($documents, $bookmarks);
 
         if ($this->request->hasArgument('message')) {
             $this->view->assign('message', $this->request->getArgument('message'));
@@ -88,7 +90,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             $this->view->assign('errorFiles', $this->request->getArgument('errorFiles'));
         }
 
-        $this->view->assign('documents', $documents);
+        $this->view->assign('documents', $workspaceItems);
     }
 
     public function listNewAction()
@@ -121,12 +123,9 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function myPublicationsAction()
     {
-        $ownerUid = $this->authorizationChecker->getUser()->getUid();
-
-        $documents = $this->documentRepository->findAllFiltered($ownerUid);
-
-        $bookmarks = $this->bookmarkRepository->findAllByOwnerUid($ownerUid);
-
+        $documents = $this->documentRepository->findAllFiltered($this->authorizationChecker->getUser()->getUid())->toArray();
+        $bookmarks = $this->bookmarkRepository->findAllByOwnerUid($this->authorizationChecker->getUser()->getUid())->toArray();
+        $workspaceItems = array_merge($documents, $bookmarks);
 
         if ($this->request->hasArgument('message')) {
             $this->view->assign('message', $this->request->getArgument('message'));
@@ -136,7 +135,7 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             $this->view->assign('errorFiles', $this->request->getArgument('errorFiles'));
         }
 
-        $this->view->assign('documents', $documents);
+        $this->view->assign('documents', $workspaceItems);
     }
 
 

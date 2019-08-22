@@ -21,9 +21,8 @@ use EWW\Dpf\Domain\Model\RemoteDocumentStatus;
 /**
  * Document
  */
-class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements WorkspaceItemInterface
 {
-
     /**
      * title
      *
@@ -164,6 +163,15 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected function initStorageObjects()
     {
         $this->file = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+    }
+
+    /**
+     * @return string
+     */
+    public function getClassShortName()
+    {
+        $reflect = new \ReflectionClass($this);
+        return $reflect->getShortName();
     }
 
     /**

@@ -15,6 +15,7 @@ namespace EWW\Dpf\Controller;
  */
 
 use EWW\Dpf\Domain\Model\Document;
+use EWW\Dpf\Domain\Model\Bookmark;
 use EWW\Dpf\Services\Transfer\DocumentTransferManager;
 use EWW\Dpf\Services\Transfer\FedoraRepository;
 use EWW\Dpf\Services\Transfer\ElasticsearchRepository;
@@ -62,13 +63,18 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
      */
     public function listAction()
     {
+        $ownerUid = $this->authorizationChecker->getUser()->getUid();
+
         $objectIdentifiers = $this->documentRepository->getObjectIdentifiers();
+
+        $bookmarkedObjectIdentifiers = $this->bookmarkRepository->findObjectIdentifiersByOwnerUid($ownerUid);
 
         $args          = $this->request->getArguments();
 
         // assign result list from elastic search
         $this->view->assign('searchList', $args['results']);
         $this->view->assign('alreadyImported', $objectIdentifiers);
+        $this->view->assign('bookmarkedObjectIdentifiers', $bookmarkedObjectIdentifiers);
         $this->view->assign('resultCount', self::RESULT_COUNT);
         $this->view->assign('query', $args['query']);
     }
@@ -291,6 +297,32 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
         );
 
         $this->forward('updateIndex', null, null, array('documentObjectIdentifier' => $documentObjectIdentifier));
+    }
+
+    /**
+     * Creates a bookmark for a document that matches the specified documentSource.
+     *
+     * @param array $documentSource
+     * @return void
+     */
+    public function bookmarkAction($documentSource)
+    {
+        $newBookmark = $this->objectManager->get(Bookmark::class);
+
+        $title = $documentSource['_dissemination']['_content']['title'][0];
+        $issue = $documentSource['_dissemination']['_content']['issue'];
+
+        if ($issue) {
+            $title .= " ".$issue;
+        }
+
+        $newBookmark->setTitle($title);
+        $newBookmark->setObjectIdentifier($documentSource['PID']);
+        $newBookmark->setOwner($this->authorizationChecker->getUser()->getUid());
+
+        $this->bookmarkRepository->add($newBookmark);
+
+        $this->redirect('search');
     }
 
     /**

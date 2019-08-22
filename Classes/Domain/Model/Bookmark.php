@@ -20,7 +20,7 @@ use EWW\Dpf\Domain\Model\RemoteDocumentStatus;
 /**
  * Document
  */
-class Bookmark extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Bookmark extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements WorkspaceItemInterface
 {
 
     /**
@@ -71,6 +71,15 @@ class Bookmark extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     protected $owner = 0;
 
+
+    /**
+     * @return string
+     */
+    public function getClassShortName()
+    {
+        $reflect = new \ReflectionClass($this);
+        return $reflect->getShortName();
+    }
 
     /**
      * Returns the title
@@ -216,7 +225,7 @@ class Bookmark extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     public function setOwner($owner)
     {
-        $this->owner = owner;
+        $this->owner = $owner;
     }
 
 }
