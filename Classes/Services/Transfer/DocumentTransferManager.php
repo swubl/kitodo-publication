@@ -112,15 +112,13 @@ class DocumentTransferManager
 
         $exporter->setObjId($document->getObjectIdentifier());
 
-        $exporter->buildMets();
-
-        $metsXml = $exporter->getMetsData();
+        $transformedXml = $exporter->getTransformedXML($document);
 
         // remove document from local index
         $elasticsearchRepository = $this->objectManager->get(ElasticsearchRepository::class);
         $elasticsearchRepository->delete($document, "");
 
-        $remoteDocumentId = $this->remoteRepository->ingest($document, $metsXml);
+        $remoteDocumentId = $this->remoteRepository->ingest($document, $transformedXml);
 
         if ($remoteDocumentId) {
             $document->setDateIssued($dateIssued);
@@ -168,11 +166,9 @@ class DocumentTransferManager
 
         $exporter->setObjId($document->getObjectIdentifier());
 
-        $exporter->buildMets();
+        $transformedXml = $exporter->getTransformedXML($document);
 
-        $metsXml = $exporter->getMetsData();
-
-        if ($this->remoteRepository->update($document, $metsXml)) {
+        if ($this->remoteRepository->update($document, $transformedXml)) {
             $document->setTransferStatus(Document::TRANSFER_SENT);
             $this->documentRepository->update($document);
             $this->documentRepository->remove($document);
