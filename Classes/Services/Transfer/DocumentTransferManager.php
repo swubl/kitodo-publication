@@ -108,7 +108,7 @@ class DocumentTransferManager
 
         $exporter->setXML($internalFormat->getXml());
 
-        $exporter->setSlubInfo($document->getSlubInfoData());
+//        $exporter->setSlubInfo($document->getSlubInfoData());
 
         $exporter->setObjId($document->getObjectIdentifier());
 
@@ -163,7 +163,7 @@ class DocumentTransferManager
 
         $exporter->setXML($internalFormat->getXml());
 
-        $exporter->setSlubInfo($document->getSlubInfoData());
+//        $exporter->setSlubInfo($document->getSlubInfoData());
 
         $exporter->setObjId($document->getObjectIdentifier());
 
