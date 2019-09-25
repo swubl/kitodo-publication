@@ -202,12 +202,12 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
             $newDocument->setTitle($document->getTitle());
             $newDocument->setAuthors($document->getAuthors());
-
+            
             $newDocument->setOwner($this->security->getUser()->getUid());
 
-            $mods = new \EWW\Dpf\Helper\Mods($document->getXmlData());
-            $mods->clearAllUrn();
-            $newDocument->setXmlData($mods->getModsXml());
+            $internalFormat = new \EWW\Dpf\Helper\InternalFormat($document->getXmlData());
+            $internalFormat->clearAllUrn();
+            $newDocument->setXmlData($internalFormat->getXml());
 
             $newDocument->setDocumentType($document->getDocumentType());
 
@@ -215,9 +215,9 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             $processNumber = $processNumberGenerator->getProcessNumber();
             $newDocument->setProcessNumber($processNumber);
 
-            $slub = new \EWW\Dpf\Helper\Slub($document->getSlubInfoData());
-            $slub->setProcessNumber($processNumber);
-            $newDocument->setSlubInfoData($slub->getSlubXml());
+//            $slub = new \EWW\Dpf\Helper\Slub($document->getSlubInfoData());
+//            $slub->setProcessNumber($processNumber);
+//            $newDocument->setSlubInfoData($slub->getSlubXml());
 
             // send document to index
             $elasticsearchRepository = $this->objectManager->get(ElasticsearchRepository::class);
@@ -282,12 +282,12 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
                 $document->setReservedObjectIdentifier($qucosaId);
             }
 
-            $mods = new \EWW\Dpf\Helper\Mods($document->getXmlData());
-            if (!$mods->hasQucosaUrn()) {
+            $internalFormat = new \EWW\Dpf\Helper\InternalFormat($document->getXmlData());
+            if (!$internalFormat->hasQucosaUrn()) {
                 $urnService = $this->objectManager->get(Urn::class);
                 $urn        = $urnService->getUrn($qucosaId);
-                $mods->addQucosaUrn($urn);
-                $document->setXmlData($mods->getModsXml());
+                $internalFormat->addQucosaUrn($urn);
+                $document->setXmlData($internalFormat->getXml());
             }
 
             $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);

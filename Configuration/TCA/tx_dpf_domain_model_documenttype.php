@@ -33,14 +33,14 @@ return array(
             'starttime' => 'starttime',
             'endtime'   => 'endtime',
         ),
-        'searchFields'             => 'name, display_name, virtual, transformation_file, metadata_page',
+        'searchFields'             => 'name, display_name, virtual, transformation_file_output, transformation_file_input, metadata_page',
         'iconfile'                 => 'EXT:dpf/Resources/Public/Icons/tx_dpf_domain_model_documenttype.gif',
     ),
     'interface' => array(
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, virtual, transformation_file, metadata_page',
+        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, display_name, virtual, transformation_file_output, transformation_file_input, metadata_page',
     ),
     'types'     => array(
-        '1' => array('showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, --palette--;;1, name, display_name, virtual, transformation_file, metadata_page, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+        '1' => array('showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, --palette--;;1, name, display_name, virtual, transformation_file_output, transformation_file_input, metadata_page, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'palettes'  => array(
         '1' => array('showitem' => ''),
@@ -158,14 +158,32 @@ return array(
                 'default' => 0,
             ),
         ),
-        'transformation_file' => [
+        'transformation_file_output' => [
             'exclude' => 1,
             'l10n_mode' => 'exclude',
-            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_documenttype.transformation_file',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_documenttype.transformation_file_output',
             'config'    => [
+                'items' => array(
+                    array(' --- Bitte wählen --- ',0)
+                ),
                 'type'           => 'select',
                 'foreign_table'  => 'tx_dpf_domain_model_transformationfile',
                 'maxitems'       => 1,
+                'minitems' => 0,
+            ],
+        ],
+        'transformation_file_input' => [
+            'exclude' => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_documenttype.transformation_file_input',
+            'config'    => [
+                'items' => array(
+                    array(' --- Bitte wählen --- ',0)
+                ),
+                'type'           => 'select',
+                'foreign_table'  => 'tx_dpf_domain_model_transformationfile',
+                'maxitems'       => 1,
+                'minitems' => 0,
             ],
         ],
         'metadata_page'    => array(

@@ -38,7 +38,7 @@ return array(
             elastic_search_host, elastic_search_port, upload_directory, upload_domain, 
             admin_new_document_notification_subject, admin_new_document_notification_body, 
             submitter_new_document_notification_subject, submitter_new_document_notification_body, 
-            submitter_ingest_notification_subject, submitter_ingest_notification_body',
+            submitter_ingest_notification_subject, submitter_ingest_notification_body, file_xpath, date_xpath, urn_xpath, state_xpath, type_xpath, type_xpath_input',
         'requestUpdate'            => 'replace_niss_part',
         'iconfile'                 => 'EXT:dpf/Resources/Public/Icons/tx_dpf_domain_model_client.gif',
     ),
@@ -49,11 +49,12 @@ return array(
         elastic_search_host, elastic_search_port, upload_directory, upload_domain,
         admin_new_document_notification_subject, admin_new_document_notification_body,
         submitter_new_document_notification_subject, submitter_new_document_notification_body,
-        submitter_ingest_notification_subject, submitter_ingest_notification_body'
+        submitter_ingest_notification_subject, submitter_ingest_notification_body, file_xpath, date_xpath, urn_xpath, state_xpath, type_xpath, type_xpath_input'
     ),
     'types'     => array(
         '1' => array('showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, --palette--;;1,
         client, owner_id, network_initial, library_identifier, admin_email, project, replace_niss_part, niss_part_search, niss_part_replace,
+        --div--;Static XML, file_xpath, date_xpath, urn_xpath, state_xpath, type_xpath, type_xpath_input,
         --div--;SWORD, sword_host, sword_user, sword_password, sword_collection_namespace,
         --div--;Fedora, fedora_host, fedora_user, fedora_password,
         --div--;Elastic search, elastic_search_host, elastic_search_port,
@@ -421,6 +422,66 @@ return array(
                 'eval' => 'trim',
             ),
             'defaultExtras' => 'richtext[]'
+        ),
+        'file_xpath' => array(
+            'exclude'   => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_client.file_xpath',
+            'config'    => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
+        ),
+        'state_xpath' => array(
+            'exclude'   => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_client.state_xpath',
+            'config'    => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
+        ),
+        'type_xpath' => array(
+            'exclude'   => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_client.type_xpath',
+            'config'    => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
+        ),
+        'type_xpath_input' => array(
+            'exclude'   => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_client.type_xpath_input',
+            'config'    => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
+        ),
+        'date_xpath' => array(
+            'exclude'   => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_client.date_xpath',
+            'config'    => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
+        ),
+        'urn_xpath' => array(
+            'exclude'   => 1,
+            'l10n_mode' => 'exclude',
+            'label'     => 'LLL:EXT:dpf/Resources/Private/Language/locallang_db.xlf:tx_dpf_domain_model_client.urn_xpath',
+            'config'    => array(
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ),
         ),
     ),
 );

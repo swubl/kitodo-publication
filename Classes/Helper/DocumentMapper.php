@@ -331,25 +331,28 @@ class DocumentMapper
 
         $exporter = new \EWW\Dpf\Services\MetsExporter();
 
-        // mods:mods
-        $modsData['documentUid'] = $documentForm->getDocumentUid();
-        $modsData['metadata']    = $formMetaData['mods'];
-        $modsData['files']       = array();
+        $exporter->setFileData($document->getFileData());
 
-        $exporter->buildModsFromForm($modsData);
-        $modsXml = $exporter->getXMLData();
-        $document->setXmlData($modsXml);
+        $documentData['documentUid'] = $documentForm->getDocumentUid();
+        $documentData['metadata']    = $formMetaData['mods'];
+        $documentData['files']       = array();
 
-        $mods = new \EWW\Dpf\Helper\Mods($modsXml);
+        $exporter->buildXmlFromForm($documentData);
 
-        $document->setTitle($mods->getTitle());
-        $document->setAuthors($mods->getAuthors());
-        $document->setDateIssued($mods->getDateIssued());
+        $internalXml = $exporter->getXmlData();
+        $document->setXmlData($internalXml);
+
+        $document->setSlubInfoData($exporter->getTransformedOutputXML($document));
+        $internalFormat = new \EWW\Dpf\Helper\InternalFormat($internalXml);
+
+        $document->setTitle($internalFormat->getTitle());
+//        $document->setAuthors($mods->getAuthors());
+//        $document->setDateIssued($mods->getDateIssued());
 
         // slub:info
-        $slubInfoData['documentUid'] = $documentForm->getDocumentUid();
-        $slubInfoData['metadata']    = $formMetaData['slubInfo'];
-        $slubInfoData['files']       = array();
+//        $slubInfoData['documentUid'] = $documentForm->getDocumentUid();
+//        $slubInfoData['metadata']    = $formMetaData['slubInfo'];
+//        $slubInfoData['files']       = array();
 //        $exporter->buildSlubInfoFromForm($slubInfoData, $documentType, $document->getProcessNumber());
 //        $slubInfoXml = $exporter->getSlubInfoData();
 
