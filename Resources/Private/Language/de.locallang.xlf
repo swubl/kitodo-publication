@@ -409,6 +409,10 @@
 			<source>Deleted</source>
 			<target>Gelöscht</target>
 		</trans-unit>
+        <trans-unit id="manager.document.noTitle" approved="yes">
+            <source>No title</source>
+            <target>Kein Titel</target>
+        </trans-unit>
 		<trans-unit id="manager.document.title" approved="yes">
 			<source>Title</source>
 			<target>Titel</target>

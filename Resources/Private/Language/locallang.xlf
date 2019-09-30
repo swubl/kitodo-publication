@@ -308,6 +308,9 @@
 		<trans-unit id="manager.document.localStatus.deleted">
 			<source>Deleted</source>
 		</trans-unit>
+        <trans-unit id="manager.document.noTitle" approved="yes">
+            <source>No title</source>
+        </trans-unit>
 		<trans-unit id="manager.document.title">
 			<source>Title</source>
 		</trans-unit>
