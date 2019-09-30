@@ -40,9 +40,8 @@ class Notifier
         try {
             $client = $this->clientRepository->findAll()->current();
             $clientAdminEmail = $client->getAdminEmail();
-            $mods = new \EWW\Dpf\Helper\Mods($document->getXmlData());
-            $slub = new \EWW\Dpf\Helper\Slub($document->getSlubInfoData());
-            $submitterEmail = $slub->getSubmitterEmail();
+            $internalFormat = new \EWW\Dpf\Helper\InternalFormat($document->getXmlData());
+            $submitterEmail = $internalFormat->getSubmitterEmail();
             $documentType = $this->documentTypeRepository->findOneByUid($document->getDocumentType());
             $authors = $document->getAuthors();
 
@@ -52,13 +51,13 @@ class Notifier
             $args['###TITLE###'] = $document->getTitle();
             $args['###AUTHOR###'] = array_shift($authors);
 
-            $args['###SUBMITTER_NAME###'] = $slub->getSubmitterName();
+            $args['###SUBMITTER_NAME###'] = $internalFormat->getSubmitterName();
             $args['###SUBMITTER_EMAIL###'] = $submitterEmail; //
-            $args['###SUBMITTER_NOTICE###'] = $slub->getSubmitterNotice();
+            $args['###SUBMITTER_NOTICE###'] = $internalFormat->getSubmitterNotice();
 
             $args['###DATE###'] = (new \DateTime)->format("d-m-Y H:i:s");
-            $args['###URN###'] = $mods->getQucosaUrn();
-            $args['###URL###'] = 'http://nbn-resolving.de/' . $mods->getQucosaUrn();
+            $args['###URN###'] = $internalFormat->getQucosaUrn();
+            $args['###URL###'] = 'http://nbn-resolving.de/' . $internalFormat->getQucosaUrn();
 
             // Notify client admin
             if ($clientAdminEmail) {
@@ -108,9 +107,9 @@ class Notifier
         try {
             $client = $this->clientRepository->findAll()->current();
             $clientAdminEmail = $client->getAdminEmail();
-            $mods = new \EWW\Dpf\Helper\Mods($document->getXmlData());
-            $slub = new \EWW\Dpf\Helper\Slub($document->getSlubInfoData());
-            $submitterEmail = $slub->getSubmitterEmail();
+            $internalFormat = new \EWW\Dpf\Helper\InternalFormat($document->getXmlData());
+
+            $submitterEmail = $internalFormat->getSubmitterEmail();
             $documentType = $this->documentTypeRepository->findOneByUid($document->getDocumentType());
             $authors = $document->getAuthors();
 
@@ -120,13 +119,13 @@ class Notifier
             $args['###TITLE###'] = $document->getTitle();
             $args['###AUTHOR###'] = array_shift($authors);
 
-            $args['###SUBMITTER_NAME###'] = $slub->getSubmitterName();
+            $args['###SUBMITTER_NAME###'] = $internalFormat->getSubmitterName();
             $args['###SUBMITTER_EMAIL###'] = $submitterEmail; //
-            $args['###SUBMITTER_NOTICE###'] = $slub->getSubmitterNotice();
+            $args['###SUBMITTER_NOTICE###'] = $internalFormat->getSubmitterNotice();
 
             $args['###DATE###'] = (new \DateTime)->format("d-m-Y H:i:s");
-            $args['###URN###'] = $mods->getQucosaUrn();
-            $args['###URL###'] = 'http://nbn-resolving.de/' . $mods->getQucosaUrn();
+            $args['###URN###'] = $internalFormat->getQucosaUrn();
+            $args['###URL###'] = 'http://nbn-resolving.de/' . $internalFormat->getQucosaUrn();
 
             // Notify submitter
             if ($submitterEmail) {
