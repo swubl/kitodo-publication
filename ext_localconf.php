@@ -114,3 +114,21 @@ $overrideSetup = 'plugin.tx_dpf_relatedlisttool.userFunc = EWW\Dpf\Plugins\Relat
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript($_EXTKEY, 'setup', $overrideSetup);
 
 $TYPO3_CONF_VARS['BE']['AJAX']['AjaxDocumentFormController:fieldAction'] = 'EXT:Dpf/Classes/Controller/AjaxDocumentFormController.php:AjaxDocumentFormController->fieldAction';
+
+
+$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
+$signalSlotDispatcher->connect(
+    \EWW\Dpf\Controller\DocumentController::class,
+    'registerDocument',
+    \EWW\Dpf\Services\Email\Notifier::class,
+    'sendNewDocumentNotification',
+    false
+);
+
+$signalSlotDispatcher->connect(
+    \EWW\Dpf\Controller\DocumentFormController::class,
+    'registerDocument',
+    \EWW\Dpf\Services\Email\Notifier::class,
+    'sendNewDocumentNotification',
+    false
+);

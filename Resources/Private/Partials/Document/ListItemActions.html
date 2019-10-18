@@ -90,7 +90,6 @@
     {f:translate(key: 'manager.postpone')}
 </f:link.action>
 
-
 <f:if condition="{dpf:IsElementAllowed(condition:'{0:\'ROLE_LIBRARIAN\'}')}">
     <f:then>
         <f:if condition="{document.state} == 'NEW:NONE'">
@@ -149,7 +148,6 @@
         </f:link.action>
     </f:else>
 </f:if>
-
 
 <f:link.action
         action="deleteLocally"

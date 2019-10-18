@@ -128,6 +128,9 @@
 		<trans-unit id="document_register.success" approved="yes">
 			<source>Document successfully registered.</source>
 		</trans-unit>
+		<trans-unit id="document_register.failure.invalidData">
+			<source>Registration of %s failed. Missing and/or invalid Data.</source>
+		</trans-unit>
         <trans-unit id="document_save.max_size_error">
             <source>Maximum document size exceeded.</source>
         </trans-unit>

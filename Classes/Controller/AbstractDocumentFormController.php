@@ -14,6 +14,8 @@ namespace EWW\Dpf\Controller;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use EWW\Dpf\Domain\Model\Document;
 use EWW\Dpf\Services\Email\Notifier;
 use EWW\Dpf\Services\Transfer\ElasticsearchRepository;
@@ -239,9 +241,11 @@ abstract class AbstractDocumentFormController extends \EWW\Dpf\Controller\Abstra
             }
         }
 
-        $notifier = $this->objectManager->get(Notifier::class);
+        //$notifier = $this->objectManager->get(Notifier::class);
+        //$notifier->sendNewDocumentNotification($newDocument);
+        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $signalSlotDispatcher->dispatch(get_class($this), 'registerDocument', [$newDocument]);
 
-        $notifier->sendNewDocumentNotification($newDocument);
 
         $requestArguments = $this->request->getArguments();
 

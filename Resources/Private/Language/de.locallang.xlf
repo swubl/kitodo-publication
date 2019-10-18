@@ -169,6 +169,10 @@
 			<source>Document successfully registered.</source>
 			<target>Dokument erfolgreich gemeldet.</target>
 		</trans-unit>
+		<trans-unit id="document_register.failure.invalidData" approved="yes">
+			<source>Registration of %s failed. Missing and/or invalid Data.</source>
+			<target>Anmeldung von %s fehlgeschlagen. Fehlende und/oder ungültige Daten.</target>
+		</trans-unit>
         <trans-unit id="document_save.max_size_error" approved="yes">
             <source>Maximum document size exceeded.</source>
             <target>Maximale Größe des Dokuments überschritten.</target>

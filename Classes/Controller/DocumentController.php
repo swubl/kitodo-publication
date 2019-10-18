@@ -14,6 +14,9 @@ namespace EWW\Dpf\Controller;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use EWW\Dpf\Domain\Model\Document;
 use EWW\Dpf\Security\DocumentVoter;
 use EWW\Dpf\Security\Security;
@@ -26,7 +29,6 @@ use EWW\Dpf\Services\Email\Notifier;
 use EWW\Dpf\Helper\ElasticsearchMapper;
 use EWW\Dpf\Exceptions\DPFExceptionInterface;
 use EWW\Dpf\Domain\Workflow\DocumentWorkflow;
-use TYPO3\CMS\Backend\Exception;
 
 /**
  * DocumentController
@@ -536,13 +538,20 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     {
         $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::REGISTER, $document);
 
-        $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_REGISTER);
+        if ($document->getValid()) {
+            $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_REGISTER);
+            $this->documentRepository->update($document);
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_register.success';
+            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+            $this->flashMessage($document, $key, $severity);
 
-        $this->documentRepository->update($document);
-
-        $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_register.success';
-        $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-        $this->flashMessage($document, $key, $severity);
+            $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+            $signalSlotDispatcher->dispatch(get_class($this), 'registerDocument', [$document]);
+        } else {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_register.failure.invalidData';
+            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
+            $this->flashMessage($document, $key, $severity);
+        }
 
         $this->redirect('list');
     }
