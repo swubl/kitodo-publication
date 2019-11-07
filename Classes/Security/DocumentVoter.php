@@ -42,6 +42,7 @@ class DocumentVoter extends Voter
     const DOUBLET_CHECK = "DOCUMENT_DOUBLET_CHECK";
     const CAUSE_CHANGE = "DOCUMENT_CAUSE_CHANGE";
     const SUGGEST_RESTORE = "DOCUMENT_SUGGEST_RESTORE";
+    const SUGGEST_MODIFICATION = "DOCUMENT_SUGGEST_MODIFICATION";
 
     /**
      * workflow
@@ -85,7 +86,8 @@ class DocumentVoter extends Voter
             self::POSTPONE,
             self::DOUBLET_CHECK,
             self::CAUSE_CHANGE,
-            self::SUGGEST_RESTORE
+            self::SUGGEST_RESTORE,
+            self::SUGGEST_MODIFICATION
         );
     }
 
@@ -210,6 +212,10 @@ class DocumentVoter extends Voter
                 return $this->canSuggestRestore($subject);
                 break;
 
+            case self::SUGGEST_MODIFICATION:
+                return $this->canSuggestModification($subject);
+                break;
+
         }
 
         throw new \Exception('An unexpected error occurred!');
@@ -249,7 +255,8 @@ class DocumentVoter extends Voter
      */
     protected function canDiscard($document)
     {
-        if ($this->workflow->can($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_DISCARD)) {
+
+        if ($this->workflow->can($document, DocumentWorkflow::TRANSITION_DISCARD)) {
 
             return (
                 $this->security->getUserRole() === Security::ROLE_LIBRARIAN ||
@@ -357,6 +364,7 @@ class DocumentVoter extends Voter
      */
     protected function canUpdate($document)
     {
+        return TRUE;
         if ($this->security->getUserRole() === Security::ROLE_LIBRARIAN) {
             return (
                 $document->getState() !== DocumentWorkflow::STATE_NEW_NONE ||
@@ -371,7 +379,7 @@ class DocumentVoter extends Voter
             );
         }
 
-        return FALSE;
+        return false;
     }
 
 
@@ -415,6 +423,29 @@ class DocumentVoter extends Voter
 
         return FALSE;
     }
+
+    /**
+     * @param \EWW\Dpf\Domain\Model\Document $document
+     * @return bool
+     */
+    protected function canSuggestModification($document)
+    {
+        if ($this->security->getUserRole() === Security::ROLE_RESEARCHER) {
+            return (
+                (
+                    $document->getOwner() !== $this->security->getUser()->getUid() &&
+                    $document->getState() === DocumentWorkflow::STATE_REGISTERED_NONE
+                ) ||
+                (
+                    $document->getState() !== DocumentWorkflow::STATE_NEW_NONE &&
+                    $document->getState() !== DocumentWorkflow::STATE_REGISTERED_NONE
+                )
+            );
+        }
+
+        return TRUE;
+    }
+
 
 
     /**

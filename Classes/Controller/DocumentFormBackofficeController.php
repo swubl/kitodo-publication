@@ -14,6 +14,7 @@ namespace EWW\Dpf\Controller;
  * The TYPO3 project - inspiring people to share!
  */
 
+use EWW\Dpf\Domain\Model\Document;
 use EWW\Dpf\Helper\DocumentMapper;
 use EWW\Dpf\Exceptions\AccessDeniedExcepion;
 use EWW\Dpf\Security\DocumentVoter;
@@ -21,6 +22,7 @@ use EWW\Dpf\Security\Security;
 use EWW\Dpf\Services\Transfer\ElasticsearchRepository;
 use EWW\Dpf\Exceptions\DPFExceptionInterface;
 use EWW\Dpf\Domain\Workflow\DocumentWorkflow;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class DocumentFormBackofficeController extends AbstractDocumentFormController
 {
@@ -94,25 +96,86 @@ class DocumentFormBackofficeController extends AbstractDocumentFormController
 
     }
 
+    public function arrayRecursiveDiff($aArray1, $aArray2) {
+        $aReturn = array();
+
+        foreach ($aArray1 as $mKey => $mValue) {
+            if (array_key_exists($mKey, $aArray2)) {
+                if (is_array($mValue)) {
+                    $aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
+                    if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
+                } else {
+                    if ($mValue != $aArray2[$mKey]) {
+                        $aReturn[$mKey] = $mValue;
+                    }
+                }
+            } else {
+                $aReturn[$mKey] = $mValue;
+            }
+        }
+        return $aReturn;
+    }
+
 
     /**
      * action edit
      *
      * @param \EWW\Dpf\Domain\Model\DocumentForm $documentForm
+     * @param bool $suggestMod
      * @ignorevalidation $documentForm
      * @return void
      */
-    public function editAction(\EWW\Dpf\Domain\Model\DocumentForm $documentForm)
+    public function editAction(\EWW\Dpf\Domain\Model\DocumentForm $documentForm, bool $suggestMod = false)
     {
         $document = $this->documentRepository->findByUid($documentForm->getDocumentUid());
         $this->view->assign('document', $document);
+        $this->view->assign('suggestMod', $suggestMod);
         $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::EDIT, $document);
 
         parent::editAction($documentForm);
     }
 
+    /**
+     * @param \EWW\Dpf\Domain\Model\DocumentForm $documentForm
+     */
+    public function createSuggestionDocumentAction(\EWW\Dpf\Domain\Model\DocumentForm $documentForm) {
+
+        $documentMapper = $this->objectManager->get(DocumentMapper::class);
+
+        /* @var $newDocument \EWW\Dpf\Domain\Model\Document */
+        $document = $documentMapper->getDocument($documentForm);
+
+        $newDocument = $this->objectManager->get(Document::class);
+
+        $this->documentRepository->add($newDocument);
+        $this->persistenceManager->persistAll();
+
+        $newDocument = $newDocument->copy($document);
+        $newDocument->setLinkedUid($document->getUid());
+        $newDocument->setSuggestion(true);
+
+        // remove files
+        $newDocument->setFile($this->objectManager->get(ObjectStorage::class));
+
+        try {
+            $this->documentRepository->add($newDocument);
+            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::SUCCESS;
+            $this->addFlashMessage("Success", '', $severity,false);
+        } catch (\Throwable $t) {
+            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
+            $this->addFlashMessage("Failed", '', $severity,false);
+        }
+
+        $this->redirectToCurrentWorkspace();
+
+    }
+
     public function updateAction(\EWW\Dpf\Domain\Model\DocumentForm $documentForm)
     {
+        if ($this->request->getArgument('documentData')['suggestMod']) {
+            $this->forward('createSuggestionDocument', null, null, ['documentForm' => $documentForm]);
+        }
+
         $document = $this->documentRepository->findByUid($documentForm->getDocumentUid());
         $this->view->assign('document', $document);
         $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::UPDATE, $document);

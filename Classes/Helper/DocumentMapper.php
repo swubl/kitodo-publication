@@ -318,6 +318,10 @@ class DocumentMapper
         $document->setReservedObjectIdentifier($documentForm->getQucosaId());
 
         $document->setValid($documentForm->getValid());
+        
+        if ($documentForm->getComment()) {
+            $document->setComment($documentForm->getComment());
+        }
 
         $formMetaData = $this->getMetadata($documentForm);
 
@@ -350,7 +354,7 @@ class DocumentMapper
         return $document;
     }
 
-    protected function getMetadata($documentForm)
+    public function getMetadata($documentForm)
     {
 
         foreach ($documentForm->getItems() as $page) {

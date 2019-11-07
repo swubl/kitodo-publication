@@ -81,8 +81,8 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
         'Document'         => 'list, showDetails, delete, discard, postpone, deleteLocally, register, release, '
             . 'duplicate, deleteConfirm, activateConfirm, inactivateConfirm, deleteConfirm, discardConfirm, '
             . 'listRegistered, listInProgress, activate, inactivate, restore, cancelListTask, uploadFiles, '
-            . 'causeChange, suggestRestore',
-        'DocumentFormBackoffice'   => 'list, new, create, edit, update, delete, cancelEdit, cancel',
+            . 'causeChange, suggestRestore, suggestModification, listSuggestions, showSuggestionDetails, confirmSuggestion',
+        'DocumentFormBackoffice'   => 'list, new, create, edit, update, delete, cancelEdit, cancel, createSuggestionDocument',
         'AjaxDocumentForm' => 'group,fileGroup,field,deleteFile,primaryUpload,secondaryUpload,fillOut',
         'Search'           => 'list, search, import, doubletCheck, nextResults, extendedSearch, latest',
         'Gnd'              => 'search',
@@ -92,8 +92,8 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
         'Document'         => 'list, showDetails, delete, discard, postpone, deleteLocally, release, register, '
             . 'duplicate, deleteConfirm, activateConfirm, inactivateConfirm, deleteConfirm, discardConfirm, '
             . 'listRegistered, listInProgress, activate, inactivate, restore, cancelListTask, uploadFiles, '
-            . 'causeChange, suggestRestore',
-        'DocumentFormBackoffice'   => 'list, new, create, edit, update, delete, cancelEdit, cancel',
+            . 'causeChange, suggestRestore, suggestModification, listSuggestions, showSuggestionDetails, confirmSuggestion',
+        'DocumentFormBackoffice'   => 'list, new, create, edit, update, delete, cancelEdit, cancel, createSuggestionDocument',
         'AjaxDocumentForm' => 'group,fileGroup,field,deleteFile,primaryUpload,secondaryUpload,fillOut',
         'Search'           => 'list, search, import, doubletCheck, nextResults, extendedSearch, latest',
         'Gnd'              => 'search',
