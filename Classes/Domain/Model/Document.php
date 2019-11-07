@@ -21,7 +21,6 @@ use EWW\Dpf\Domain\Workflow\DocumentWorkflow;
  */
 class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
-
     /**
      * title
      *
@@ -143,6 +142,34 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      */
     protected $state = DocumentWorkflow::STATE_NONE_NONE;
+
+    /**
+     * editorUid
+     *
+     * @var integer
+     */
+    protected $editorUid = 0;
+
+    /**
+     * temporary
+     *
+     * @var boolean
+     */
+    protected $temporary = FALSE;
+
+    /**
+     * remoteLastModDate
+     *
+     * @var string
+     */
+    protected $remoteLastModDate = '';
+
+    /**
+     * tstamp
+     *
+     * @var integer
+     */
+    protected $tstamp;
 
     /**
      * @var int
@@ -684,89 +711,6 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         $this->dateIssued = empty($dateIssued) ? '' : $dateIssued;
     }
 
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isActive()
-    {
-        return $this->getState() == DocumentWorkflow::STATE_IN_PROGRESS_ACTIVE;
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isDeleteRemote()
-    {
-        return $this->localStatus == LocalDocumentStatus::DELETED;
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isRestoreRemote()
-    {
-        return $this->getRemoteStatus() == RemoteDocumentStatus::DELETED
-            && $this->getLocalStatus() != LocalDocumentStatus::DELETED;
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isActivateRemote()
-    {
-        return $this->getRemoteStatus() == RemoteDocumentStatus::INACTIVE;
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isInactivateRemote()
-    {
-        return $this->getRemoteStatus() == RemoteDocumentStatus::ACTIVE;
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isIngestRemote()
-    {
-        return empty($this->remoteStatus) && empty($this->objectIdentifier);
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function isUpdateRemote()
-    {
-        return $this->localStatus != LocalDocumentStatus::DELETED
-            && $this->remoteStatus != RemoteDocumentStatus::DELETED
-            && !empty($this->objectIdentifier);
-    }
-
-    /**
-     *
-     *
-     * @return boolean
-     */
-    public function getIsNew()
-    {
-        return (!$this->changed) && (empty($this->objectIdentifier));
-    }
-
 
     /**
      * Returns the process number
@@ -846,6 +790,71 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     {
         $this->state = $state;
     }
+
+    /**
+     * @return boolean $temporary
+     */
+    public function getTemporary() {
+        return $this->temporary;
+    }
+
+    /**
+     * @return boolean $temporary
+     */
+    public function isTemporary() {
+        return $this->getTemporary();
+    }
+
+    /**
+     * @param boolean $temporary
+     * @return void
+     */
+    public function setTemporary($temporary) {
+        $this->temporary = $temporary;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getEditorUid()
+    {
+        return $this->editorUid;
+    }
+
+    /**
+     * @param integer $editorUid
+     * @return void
+     */
+    public function setEditorUid($editorUid)
+    {
+        $this->editorUid = $editorUid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemoteLastModDate()
+    {
+        return $this->remoteLastModDate;
+    }
+
+    /**
+     * @param string $remoteLastModDate
+     * @return void
+     */
+    public function setRemoteLastModDate($remoteLastModDate)
+    {
+        $this->remoteLastModDate = $remoteLastModDate;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getTstamp()
+    {
+        return $this->tstamp;
+    }
+
 
     /**
      * @return bool

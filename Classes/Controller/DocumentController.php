@@ -21,11 +21,11 @@ use EWW\Dpf\Services\Transfer\ElasticsearchRepository;
 use EWW\Dpf\Services\Transfer\DocumentTransferManager;
 use EWW\Dpf\Services\Transfer\FedoraRepository;
 use EWW\Dpf\Services\ProcessNumber\ProcessNumberGenerator;
-use EWW\Dpf\Services\Identifier\Urn;
 use EWW\Dpf\Services\Email\Notifier;
 use EWW\Dpf\Helper\ElasticsearchMapper;
 use EWW\Dpf\Exceptions\DPFExceptionInterface;
 use EWW\Dpf\Domain\Workflow\DocumentWorkflow;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use EWW\Dpf\Helper\DocumentMapper;
 use TYPO3\CMS\Backend\Exception;
 
@@ -58,6 +58,33 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     protected $workflow;
 
+    /**
+     * documentTransferManager
+     *
+     * @var \EWW\Dpf\Services\Transfer\DocumentTransferManager $documentTransferManager
+     */
+    protected $documentTransferManager;
+
+    /**
+     * fedoraRepository
+     *
+     * @var \EWW\Dpf\Services\Transfer\FedoraRepository $fedoraRepository
+     */
+    protected $fedoraRepository;
+
+
+    /**
+     * DocumentController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
+        $this->documentTransferManager = $objectManager->get(DocumentTransferManager::class);
+        $this->fedoraRepository = $objectManager->get(FedoraRepository::class);
+        $this->documentTransferManager->setRemoteRepository($this->fedoraRepository);
+    }
 
     /**
      * action list
@@ -68,7 +95,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function listAction($stateFilters = array())
     {
-        $this->setSessionData('currentWorkspaceAction','list');
+        $this->setSessionData('redirectToDocumentListAction','list');
+        $this->setSessionData('redirectToDocumentListController','Document');
 
         list($isWorkspace, $documents) = $this->getListViewData($stateFilters);
 
@@ -240,7 +268,9 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
     public function listRegisteredAction()
     {
-        $this->setSessionData('currentWorkspaceAction','listRegistered');
+        $this->setSessionData('redirectToDocumentListAction','listRegistered');
+        $this->setSessionData('redirectToDocumentListController','Document');
+
         list($isWorkspace, $documents) = $this->getListViewData([DocumentWorkflow::STATE_REGISTERED_NONE]);
 
         if ($this->request->hasArgument('message')) {
@@ -257,7 +287,8 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
     public function listInProgressAction()
     {
-        $this->setSessionData('currentWorkspaceAction','listInProgress');
+        $this->setSessionData('redirectToDocumentListAction','listInProgress');
+        $this->setSessionData('redirectToDocumentListController','Document');
 
         if ($this->request->hasArgument('message')) {
             $this->view->assign('message', $this->request->getArgument('message'));
@@ -282,33 +313,28 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
 
 
     /**
-     * action discardConfirm
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function discardConfirmAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-        $this->view->assign('document', $document);
-    }
-
-    /**
      * action discard
      *
      * @param \EWW\Dpf\Domain\Model\Document $document
+     * @param integer $tstamp
      * @return void
      */
-    public function discardAction(\EWW\Dpf\Domain\Model\Document $document)
+    public function discardAction(\EWW\Dpf\Domain\Model\Document $document, $tstamp)
     {
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::DISCARD, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::DISCARD, $document)) {
+            if ($document->getEditorUid()) {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.failureBlocked';
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.accessDenied';
+            }
+            $this->flashMessage($$document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
+
+        $document->setEditorUid($this->security->getUser()->getUid());
 
         try {
-                // remove document from local index
-                //$elasticsearchRepository = $this->objectManager->get(ElasticsearchRepository::class);
-                // send document to index
-                //$elasticsearchRepository->delete($document, "");
-                //$this->documentRepository->remove($document);
-
                 if (
                     in_array(
                         $document->getState(),
@@ -319,107 +345,172 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
                         ]
                     )
                 ) {
-                    /* todo:
-                        ...
-                        $documentTransferManager->update($document);
-                        ...
-                    */
-                    $this->workflow->apply($document, DocumentWorkflow::TRANSITION_DISCARD);
-                    $this->documentRepository->update($document);
-                    $this->documentRepository->remove($document);
+                    if ($document->getTemporary()) {
+                        $noNewerVersion = $this->documentTransferManager->getLastModDate($document->getObjectIdentifier()) === $document->getRemoteLastModDate();
+                    } else {
+                        $noNewerVersion = $tstamp === $document->getTstamp();
+                    }
 
+                    if ($noNewerVersion) {
+                        if ($this->documentTransferManager->delete($document, "") && $this->documentTransferManager->update($document)) {
+                            $this->workflow->apply($document, DocumentWorkflow::TRANSITION_DISCARD);
+                            $this->documentRepository->update($document);
+                            $this->documentRepository->remove($document);
+                            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.success';
+                            $this->flashMessage($document, $key, AbstractMessage::OK);
+                            $this->redirectToDocumentList();
+                        } else {
+                            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.failure';
+                            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                            $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
+                        }
+                    } else {
+                        $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.failureNewVersion';
+                        $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                        $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
+                    }
                 } else {
-                    $this->workflow->apply($document, DocumentWorkflow::TRANSITION_DISCARD);
-                    $this->documentRepository->update($document);
+                    if ($tstamp === $document->getTstamp()) {
+                        $this->workflow->apply($document, DocumentWorkflow::TRANSITION_DISCARD);
+                        $this->documentRepository->update($document);
+                        $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.success';
+                        $this->flashMessage($document, $key, AbstractMessage::OK);
+                        $this->redirectToDocumentList();
+                    } else {
+                        $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.failureNewVersion';
+                        $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                        $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
+                    }
                 }
-
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.success';
-                $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-
+        } catch (\TYPO3\CMS\Extbase\Mvc\Exception\StopActionException $e) {
+            // A redirect always throws this exception, but in this case, however,
+            // redirection is desired and should not lead to an exception handling
         } catch (\Exception $exception) {
-
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
             if ($exception instanceof DPFExceptionInterface) {
                 $key = $exception->messageLanguageKey();
             } else {
                 $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_discard.failure';
             }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirectToDocumentList();
         }
-
-        $this->flashMessage($document, $key, $severity);
-        $this->redirect('list');
     }
 
     /**
      * action postpone
      *
      * @param \EWW\Dpf\Domain\Model\Document $document
+     * @param integer $tstamp
      * @return void
      */
-    public function postponeAction(\EWW\Dpf\Domain\Model\Document $document)
+    public function postponeAction(\EWW\Dpf\Domain\Model\Document $document, $tstamp)
     {
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::POSTPONE, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::POSTPONE, $document)) {
+            if ($document->getEditorUid()) {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.failureBlocked';
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.accessDenied';
+            }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
-        $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-        $remoteRepository = $this->objectManager->get(FedoraRepository::class);
-        $documentTransferManager->setRemoteRepository($remoteRepository);
+        $document->setEditorUid($this->security->getUser()->getUid());
 
         try {
-            if ($document->getState() === DocumentWorkflow::STATE_IN_PROGRESS_ACTIVE) {
-                if ($documentTransferManager->delete($document, "inactivate")) {
-                    $this->documentRepository->update($document);
-                    $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_POSTPONE);
-                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.success';
-                    $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+            if (
+                in_array(
+                    $document->getState(),
+                    [
+                        DocumentWorkflow::STATE_IN_PROGRESS_DELETED,
+                        DocumentWorkflow::STATE_IN_PROGRESS_INACTIVE,
+                        DocumentWorkflow::STATE_IN_PROGRESS_ACTIVE
+                    ]
+                )
+            ) {
+                if ($document->getTemporary()) {
+                    $noNewerVersion = $this->documentTransferManager->getLastModDate($document->getObjectIdentifier()) === $document->getRemoteLastModDate();
                 } else {
-                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.failure';
-                    $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
+                    $noNewerVersion = $tstamp === $document->getTstamp();
+                }
+
+                if ($noNewerVersion) {
+                    if ($this->documentTransferManager->delete($document, "inactivate") && $this->documentTransferManager->update($document)) {
+                        $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_POSTPONE);
+                        $this->documentRepository->update($document);
+                        $this->documentRepository->remove($document);
+                        $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.success';
+                        $this->flashMessage($document, $key, AbstractMessage::OK);
+                        $this->redirectToDocumentList();
+                    } else {
+                        $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.failure';
+                        $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                        $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
+                    }
+                } else {
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.failureNewVersion';
+                    $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                    $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
                 }
             } else {
-                $this->documentRepository->update($document);
-                $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_POSTPONE);
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.success';
-                $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+                if ($tstamp === $document->getTstamp()) {
+                    $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_POSTPONE);
+                    $this->documentRepository->update($document);
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.success';
+                    $this->flashMessage($document, $key, AbstractMessage::OK);
+                    $this->redirectToDocumentList();
+                } else {
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.failureNewVersion';
+                    $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                    $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
+                }
             }
+        } catch (\TYPO3\CMS\Extbase\Mvc\Exception\StopActionException $e) {
+            // A redirect always throws this exception, but in this case, however,
+            // redirection is desired and should not lead to an exception handling
         } catch (\Exception $exception) {
-
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
             if ($exception instanceof DPFExceptionInterface) {
                 $key = $exception->messageLanguageKey();
             } else {
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_error.unexpected';
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_postpone.failed';
             }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirectToDocumentList();
         }
-
-        $this->flashMessage($document, $key, $severity);
-        $this->redirect('list');
     }
 
-
-    /**
-     * action deleteLocallyConfirm
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function deleteLocallyConfirmAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-        throw new \Exception('deleteLocallyConfirmAction');
-    }
 
     /**
      * action deleteLocallyAction
      *
      * @param Document $document
+     * @param integer $tstamp
+     * @return void
      */
-    public function deleteLocallyAction(\EWW\Dpf\Domain\Model\Document $document)
+    public function deleteLocallyAction(\EWW\Dpf\Domain\Model\Document $document, $tstamp)
     {
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::DELETE_LOCALLY, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::DELETE_LOCALLY, $document)) {
+            if ($document->getEditorUid()) {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_deleteLocally.failureBlocked';
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_deleteLocally.accessDenied';
+            }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
-        $this->documentRepository->remove($document);
-        $this->redirect('list');
+        if ($tstamp === $document->getTstamp()) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_deleteLocally.success';
+            $this->flashMessage($document, $key, AbstractMessage::OK);
+            $this->documentRepository->remove($document);
+            $this->redirectToDocumentList();
+        } else {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_deleteLocally.failureNewVersion';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+        }
     }
 
     /**
@@ -430,7 +521,12 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function duplicateAction(\EWW\Dpf\Domain\Model\Document $document)
     {
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::DUPLICATE, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::DUPLICATE, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_duplicate.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
         try {
             /* @var $newDocument \EWW\Dpf\Domain\Model\Document */
@@ -468,217 +564,164 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
             $this->documentRepository->add($newDocument);
 
             $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_duplicate.success';
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+            $this->flashMessage($document, $key, AbstractMessage::OK);
+            $this->redirect('list');
+
         } catch (\Exception $exception) {
-
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
             if ($exception instanceof DPFExceptionInterface) {
                 $key = $exception->messageLanguageKey();
             } else {
                 $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_duplicate.failure';
             }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('list');
         }
-
-        $this->flashMessage($document, $key, $severity);
-
-        $this->redirect('list');
     }
 
 
     /**
-     * action release
+     * releaseUpdateAction
      *
      * @param \EWW\Dpf\Domain\Model\Document $document
+     * @param integer $tstamp
      * @return void
      */
-    public function releaseAction(\EWW\Dpf\Domain\Model\Document $document)
+    public function releaseUpdateAction(\EWW\Dpf\Domain\Model\Document $document, $tstamp)
     {
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::RELEASE_UPDATE, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_update.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
+
         try {
-            // generate URN if needed
-            $qucosaId = $document->getObjectIdentifier();
-            if (empty($qucosaId)) {
-                $qucosaId = $document->getReservedObjectIdentifier();
+            if (
+                $this->documentTransferManager->getLastModDate($document->getObjectIdentifier()) === $document->getRemoteLastModDate() &&
+                $tstamp === $document->getTstamp()
+            ) {
+                if ($this->documentTransferManager->update($document)) {
+                    $this->documentRepository->remove($document);
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_update.success';
+                    $this->flashMessage($document, $key, AbstractMessage::OK);
+                    $this->redirect('list');
+                }
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_update.failureNewVersion';
+                $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                $this->redirect('showDetails', 'Document', NULL, ['document' => $document]);
             }
-            if (empty($qucosaId)) {
-                $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-                $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
-                $documentTransferManager->setRemoteRepository($remoteRepository);
-                $qucosaId = $documentTransferManager->getNextDocumentId();
-                $document->setReservedObjectIdentifier($qucosaId);
+        } catch (\TYPO3\CMS\Extbase\Mvc\Exception\StopActionException $e) {
+            // A redirect always throws this exception, but in this case, however,
+            // redirection is desired and should not lead to an exception handling
+        } catch (\Exception $exception) {
+            if ($exception instanceof DPFExceptionInterface) {
+                $key = $exception->messageLanguageKey();
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
             }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('list');
+        }
 
-            $mods = new \EWW\Dpf\Helper\Mods($document->getXmlData());
-            if (!$mods->hasQucosaUrn()) {
-                $urnService = $this->objectManager->get(Urn::class);
-                $urn        = $urnService->getUrn($qucosaId);
-                $mods->addQucosaUrn($urn);
-                $document->setXmlData($mods->getModsXml());
-            }
+    }
 
-            $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-            $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
-            $documentTransferManager->setRemoteRepository($remoteRepository);
+    /**
+     * releasePublishAction
+     *
+     * @param \EWW\Dpf\Domain\Model\Document $document
+     * @param integer $tstamp
+     * @return void
+     */
+    public function releasePublishAction(\EWW\Dpf\Domain\Model\Document $document, $tstamp)
+    {
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::RELEASE_PUBLISH, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
-            $objectIdentifier = $document->getObjectIdentifier();
-
-            if (empty($objectIdentifier)) {
-
-                // Document is not in the fedora repository.
-
-                if ($documentTransferManager->ingest($document)) {
-                    $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.success';
-                    $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+        try {
+            if ($tstamp === $document->getTstamp()) {
+                if ($this->documentTransferManager->ingest($document)) {
                     $notifier = $this->objectManager->get(Notifier::class);
                     $notifier->sendIngestNotification($document);
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.success';
+                    $this->flashMessage($document, $key, AbstractMessage::OK);
+                    $this->redirectToDocumentList();
+                } else {
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.failure';
+                    $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                    $this->redirect('showDetails', 'Document', null, ['document' => $document]);
                 }
             } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_ingest.failureNewVersion';
+                $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            }
+        } catch (\Exception $exception) {
 
-                // Document needs to be updated.
+            if ($exception instanceof DPFExceptionInterface) {
+                $key = $exception->messageLanguageKey();
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
+            }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('list');
+        }
+    }
 
-                if ($documentTransferManager->update($document)) {
-                    $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_update.success';
-                    $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
+
+    /**
+     * releaseActivateAction
+     *
+     * @param \EWW\Dpf\Domain\Model\Document $document
+     * @param integer $tstamp
+     * @return void
+     */
+    public function releaseActivateAction(\EWW\Dpf\Domain\Model\Document $document, $tstamp)
+    {
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::RELEASE_ACTIVATE, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_activate.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
+
+        try {
+            if (
+                $this->documentTransferManager->getLastModDate($document->getObjectIdentifier()) === $document->getRemoteLastModDate() &&
+                $tstamp === $document->getTstamp()
+            ) {
+                if ($this->documentTransferManager->delete($document, "revert") && $this->documentTransferManager->update($document)) {
+                    $this->documentRepository->remove($document);
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_activate.success';
+                    $this->flashMessage($document, $key, AbstractMessage::OK);
+                    $this->redirectToDocumentList();
+                } else {
+                    $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_activate.failure';
+                    $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                    $this->redirect('showDetails', 'Document', null, ['document' => $document]);
                 }
+            } else {
+                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_activate.failureNewVersion';
+                $this->flashMessage($document, $key, AbstractMessage::ERROR);
+                $this->redirect('showDetails', 'Document', null, ['document' => $document]);
             }
+        } catch (\TYPO3\CMS\Extbase\Mvc\Exception\StopActionException $e) {
+            // A redirect always throws this exception, but in this case, however,
+            // redirection is desired and should not lead to an exception handling
         } catch (\Exception $exception) {
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
             if ($exception instanceof DPFExceptionInterface) {
                 $key = $exception->messageLanguageKey();
             } else {
                 $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
             }
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('list');
         }
-
-        $this->flashMessage($document, $key, $severity);
-
-        $this->redirect('list');
     }
-
-
-    /**
-     * action restore
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function restoreAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-
-        $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-        $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
-        $documentTransferManager->setRemoteRepository($remoteRepository);
-
-        try {
-            if ($documentTransferManager->delete($document, "inactivate")) {
-                $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_restore.success';
-                $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-            }
-        } catch (\Exception $exception) {
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
-            if ($exception instanceof DPFExceptionInterface) {
-                $key = $exception->messageLanguageKey();
-            } else {
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
-            }
-        }
-
-        $this->flashMessage($document, $key, $severity);
-
-        $this->redirect('list');
-    }
-
-    /**
-     * action deleteConfirm
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function deleteConfirmAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-        $this->view->assign('document', $document);
-    }
-
-    /**
-     * action delete
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function deleteAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-        die("deleteAction is obsolete");
-
-        $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-        $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
-        $documentTransferManager->setRemoteRepository($remoteRepository);
-
-        try {
-            if ($documentTransferManager->delete($document, "")) {
-                $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_delete.success';
-                $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-            }
-        } catch (\Exception $exception) {
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
-            if ($exception instanceof DPFExceptionInterface) {
-                $key = $exception->messageLanguageKey();
-            } else {
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
-            }
-        }
-
-        $this->flashMessage($document, $key, $severity);
-
-        $this->redirect('list');
-    }
-
-    /**
-     * action activateConfirm
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function activateConfirmAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-        $this->view->assign('document', $document);
-    }
-
-    /**
-     * action activate
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function activateAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-
-        $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-        $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
-        $documentTransferManager->setRemoteRepository($remoteRepository);
-
-        try {
-            if ($documentTransferManager->delete($document, "revert")) {
-                $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_activate.success';
-                $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-            }
-        } catch (\Exception $exception) {
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
-            if ($exception instanceof DPFExceptionInterface) {
-                $key = $exception->messageLanguageKey();
-            } else {
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
-            }
-        }
-
-        $this->flashMessage($document, $key, $severity);
-
-        $this->redirect('list');
-    }
-
 
     /**
      * action register
@@ -688,16 +731,19 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function registerAction(\EWW\Dpf\Domain\Model\Document $document)
     {
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::REGISTER, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::REGISTER, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_register.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
         $this->workflow->apply($document, \EWW\Dpf\Domain\Workflow\DocumentWorkflow::TRANSITION_REGISTER);
 
         $this->documentRepository->update($document);
 
         $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_register.success';
-        $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-        $this->flashMessage($document, $key, $severity);
-
+        $this->flashMessage($document, $key, AbstractMessage::OK);
         $this->redirect('list');
     }
 
@@ -709,65 +755,19 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function showDetailsAction(\EWW\Dpf\Domain\Model\Document $document)
     {
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::SHOW_DETAILS, $document);
-        $this->view->assign('document', $document);
-    }
-
-    /**
-     * action cancelListTask
-     *
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
-     */
-    public function cancelListTaskAction()
-    {
-        $redirectAction = $this->getSessionData('currentWorkspaceAction');
-        $redirectAction = empty($redirectAction)? 'defaultAction' : $redirectAction;
-        $this->redirect($redirectAction, 'Document', null, array('message' => $message));
-    }
-
-    /**
-     * action inactivateConfirm
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function inactivateConfirmAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-        $this->view->assign('document', $document);
-    }
-
-    /**
-     * action inactivate
-     *
-     * @param \EWW\Dpf\Domain\Model\Document $document
-     * @return void
-     */
-    public function inactivateAction(\EWW\Dpf\Domain\Model\Document $document)
-    {
-
-        $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
-        $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
-        $documentTransferManager->setRemoteRepository($remoteRepository);
-
-        try {
-            if ($documentTransferManager->delete($document, "inactivate")) {
-                $key      = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_inactivate.success';
-                $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK;
-            }
-        } catch (\Exception $exception) {
-            $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR;
-
-            if ($exception instanceof DPFExceptionInterface) {
-                $key = $exception->messageLanguageKey();
-            } else {
-                $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:error.unexpected';
-            }
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::SHOW_DETAILS, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_showDetails.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
         }
 
-        $this->flashMessage($document, $key, $severity);
+        $this->view->assign('document', $document);
+    }
 
-        $this->redirect('list');
+    public function cancelListTaskAction()
+    {
+        $this->redirectToDocumentList();
     }
 
     /**
@@ -790,7 +790,12 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function causeChangeAction(\EWW\Dpf\Domain\Model\Document $document) {
 
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::CAUSE_CHANGE, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::CAUSE_CHANGE, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_suggestChange.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
         $this->view->assign('document', $document);
     }
@@ -804,7 +809,12 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
      */
     public function suggestRestoreAction(\EWW\Dpf\Domain\Model\Document $document) {
 
-        $this->authorizationChecker->denyAccessUnlessGranted(DocumentVoter::SUGGEST_RESTORE, $document);
+        if (!$this->authorizationChecker->isGranted(DocumentVoter::SUGGEST_RESTORE, $document)) {
+            $key = 'LLL:EXT:dpf/Resources/Private/Language/locallang.xlf:document_suggestRestore.accessDenied';
+            $this->flashMessage($document, $key, AbstractMessage::ERROR);
+            $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            return FALSE;
+        }
 
         $this->view->assign('document', $document);
     }
@@ -827,6 +837,9 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     }
 
 
+    /**
+     * initializeAction
+     */
     public function initializeAction()
     {
         $this->authorizationChecker->denyAccessUnlessLoggedIn();
@@ -834,6 +847,20 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
         parent::initializeAction();
 
         $this->workflow = $this->objectManager->get(DocumentWorkflow::class)->getWorkflow();
+    }
+
+    /**
+     * Redirect to the current document list.
+     *
+     * @param null $message
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     */
+    protected function redirectToDocumentList($message = null)
+    {
+        $redirectAction = $this->getSessionData('redirectToDocumentListAction');
+        $redirectController = $this->getSessionData('redirectToDocumentListController');
+        $this->redirect($redirectAction, $redirectController, null, array('message' => $message));
     }
 
 
@@ -902,8 +929,10 @@ class DocumentController extends \EWW\Dpf\Controller\AbstractController
     {
 
         // Show success or failure of the action in a flash message
-        $args[] = $document->getTitle();
-        $args[] = $document->getObjectIdentifier();
+        if ($document) {
+            $args[] = $document->getTitle();
+            $args[] = $document->getObjectIdentifier();
+        }
 
         $message = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, 'dpf', $args);
         $message = empty($message) ? $defaultMessage : $message;

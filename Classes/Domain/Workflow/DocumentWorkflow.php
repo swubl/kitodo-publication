@@ -37,21 +37,27 @@ class DocumentWorkflow
     public const REMOTE_STATE_DELETED      = "DELETED";
 
     public const STATE_NONE_NONE            = self::LOCAL_STATE_NONE.':'.self::REMOTE_STATE_NONE;
-    // Eingestellt
+
+    // New
     public const STATE_NEW_NONE             = self::LOCAL_STATE_NEW.':'.self::REMOTE_STATE_NONE;
-    // Gemeldet
+
+    // Registered
     public const STATE_REGISTERED_NONE      = self::LOCAL_STATE_REGISTERED.':'.self::REMOTE_STATE_NONE;
-    // In Bearbeitung
+
+    // In progress
     public const STATE_IN_PROGRESS_NONE     = self::LOCAL_STATE_IN_PROGRESS.':'.self::REMOTE_STATE_NONE;
     public const STATE_IN_PROGRESS_ACTIVE   = self::LOCAL_STATE_IN_PROGRESS.":".self::REMOTE_STATE_ACTIVE;
     public const STATE_IN_PROGRESS_INACTIVE = self::LOCAL_STATE_IN_PROGRESS.":".self::REMOTE_STATE_INACTIVE;
     public const STATE_IN_PROGRESS_DELETED  = self::LOCAL_STATE_IN_PROGRESS.":".self::REMOTE_STATE_DELETED;
-    // Freigegeben
+
+    // Active
     public const STATE_NONE_ACTIVE          = self::LOCAL_STATE_NONE.':'.self::REMOTE_STATE_ACTIVE;
-    // Zurückgestellt
+
+    // Postponed
     public const STATE_POSTPONED_NONE       = self::LOCAL_STATE_POSTPONED.':'.self::REMOTE_STATE_NONE;
     public const STATE_NONE_INACTIVE        = self::LOCAL_STATE_NONE.':'.self::REMOTE_STATE_INACTIVE;
-    // Verworfen
+
+    // Discarded
     public const STATE_DISCARDED_NONE       = self::LOCAL_STATE_DISCARDED.':'.self::REMOTE_STATE_NONE;
     public const STATE_NONE_DELETED         = self::LOCAL_STATE_NONE.':'.self::REMOTE_STATE_DELETED;
 
@@ -60,12 +66,11 @@ class DocumentWorkflow
     public const TRANSITION_REGISTER            = "REGISTER_TRANSITION";
     public const TRANSITION_DISCARD             = "DISCARD_TRANSITION";
     public const TRANSITION_POSTPONE            = "POSTPONE_TRANSITION";
-    public const TRANSITION_PUBLISH             = "PUBLISH_TRANSITION";
-    public const TRANSITION_UPDATE              = "UPDATE_TRANSITION";
+    public const TRANSITION_RELEASE_PUBLISH     = "RELEASE_PUBLISH_TRANSITION";
+    public const TRANSITION_RELEASE_UPDATE      = "RELEASE_UPDATE_TRANSITION";
+    public const TRANSITION_RELEASE_ACTIVATE    = "RELEASE_ACTIVATE_TRANSITION";
     public const TRANSITION_DELETE_LOCALLY      = "DELETE_LOCALLY_TRANSITION";
     public const TRANSITION_DELETE_WORKING_COPY = "DELETE_WORKING_COPY_TRANSITION";
-    public const TRANSITION_ACTIVATE            = "ACTIVATE_TRANSITION";
-    public const TRANSITION_INACTIVATE          = "INACTIVATE_TRANSITION";
 
     public const PLACES = [
         self::STATE_NONE_NONE,
@@ -101,27 +106,75 @@ class DocumentWorkflow
                 self::STATE_IN_PROGRESS_NONE,
                 self::STATE_POSTPONED_NONE,
                 self::STATE_IN_PROGRESS_ACTIVE,
-                self::STATE_IN_PROGRESS_INACTIVE
+                self::STATE_IN_PROGRESS_INACTIVE,
+                self::STATE_NONE_ACTIVE,
+                self::STATE_NONE_INACTIVE
             ],
             "to" => [
                 self::STATE_DISCARDED_NONE,
                 self::STATE_DISCARDED_NONE,
                 self::STATE_DISCARDED_NONE,
                 self::STATE_NONE_DELETED,
+                self::STATE_NONE_DELETED,
+                self::STATE_NONE_DELETED,
                 self::STATE_NONE_DELETED
             ]
         ],
         self::TRANSITION_POSTPONE => [
-            "from" => [self::STATE_IN_PROGRESS_NONE, self::STATE_REGISTERED_NONE, self::STATE_IN_PROGRESS_ACTIVE],
-            "to" => [self::STATE_POSTPONED_NONE, self::STATE_POSTPONED_NONE, self::STATE_NONE_INACTIVE]
+            "from" => [
+                self::STATE_REGISTERED_NONE,
+                self::STATE_IN_PROGRESS_NONE,
+                self::STATE_DISCARDED_NONE,
+                self::STATE_IN_PROGRESS_ACTIVE,
+                self::STATE_IN_PROGRESS_DELETED,
+                self::STATE_NONE_ACTIVE,
+                self::STATE_NONE_DELETED
+            ],
+            "to" => [
+                self::STATE_POSTPONED_NONE,
+                self::STATE_POSTPONED_NONE,
+                self::STATE_POSTPONED_NONE,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_INACTIVE
+            ]
         ],
-        self::TRANSITION_PUBLISH => [
-            "from" => [self::STATE_IN_PROGRESS_NONE, self::STATE_IN_PROGRESS_INACTIVE, self::STATE_IN_PROGRESS_DELETED],
+        self::TRANSITION_RELEASE_PUBLISH => [
+            "from" => [
+                self::STATE_REGISTERED_NONE,
+                self::STATE_IN_PROGRESS_NONE,
+                self::STATE_DISCARDED_NONE,
+                self::STATE_POSTPONED_NONE,
+            ],
             "to" => self::STATE_NONE_ACTIVE
         ],
-        self::TRANSITION_UPDATE => [
-            "from" => [self::STATE_IN_PROGRESS_ACTIVE, self::STATE_IN_PROGRESS_INACTIVE, self::STATE_IN_PROGRESS_DELETED],
-            "to" => [self::STATE_NONE_ACTIVE, self::STATE_NONE_INACTIVE, self::STATE_NONE_DELETED],
+        self::TRANSITION_RELEASE_ACTIVATE => [
+            "from" => [
+                self::STATE_IN_PROGRESS_INACTIVE,
+                self::STATE_IN_PROGRESS_DELETED,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_DELETED
+            ],
+            "to" => self::STATE_NONE_ACTIVE
+        ],
+        self::TRANSITION_RELEASE_UPDATE => [
+            "from" => [
+                self::STATE_IN_PROGRESS_ACTIVE,
+                self::STATE_IN_PROGRESS_INACTIVE,
+                self::STATE_IN_PROGRESS_DELETED,
+                self::STATE_NONE_ACTIVE,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_DELETED
+            ],
+            "to" => [
+                self::STATE_NONE_ACTIVE,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_DELETED,
+                self::STATE_NONE_ACTIVE,
+                self::STATE_NONE_INACTIVE,
+                self::STATE_NONE_DELETED
+            ],
         ],
         self::TRANSITION_DELETE_LOCALLY => [
             "from" => [self::STATE_NEW_NONE],
@@ -131,32 +184,24 @@ class DocumentWorkflow
             "from" => [self::STATE_IN_PROGRESS_ACTIVE, self::STATE_IN_PROGRESS_INACTIVE, self::STATE_IN_PROGRESS_DELETED],
             "to" => self::STATE_NONE_NONE
         ],
-        self::TRANSITION_ACTIVATE => [
-            "from" => [self::STATE_IN_PROGRESS_INACTIVE],
-            "to" => self::STATE_IN_PROGRESS_ACTIVE
-        ],
-        self::TRANSITION_INACTIVATE => [
-            "from" => [self::STATE_IN_PROGRESS_ACTIVE],
-            "to" => self::STATE_IN_PROGRESS_INACTIVE
-        ]
     ];
     
     public static function getWorkflow()
     {
         $definitionBuilder = new DefinitionBuilder();
 
-        $definition = $definitionBuilder->addPlaces(self::PLACES);
+        $definitionBuilder->addPlaces(self::PLACES);
 
         foreach (self::TRANSITIONS as $transitionName => $transition) {
             if (!empty($transition["from"]) && !empty($transition["to"])) {
                 foreach ($transition["from"] as $key => $fromState) {
                     if (is_array($transition["to"])) {
-                        $definition = $definitionBuilder->addTransition(
+                        $definitionBuilder->addTransition(
                             new Transition($transitionName, $fromState, $transition["to"][$key])
                         );
                     } else {
-                        $definition = $definitionBuilder->addTransition(
-                            new Transition($transitionName, $fromState, $transition["to"])
+                        $definitionBuilder->addTransition(
+                             new Transition($transitionName, $fromState, $transition["to"])
                         );
                     }
                 }
@@ -167,11 +212,7 @@ class DocumentWorkflow
 
         $marking = new MethodMarkingStore(TRUE, 'state');
 
-        $dispatcher = new EventDispatcher();
-        $listener = new DocumentWorkflowGuardSubscriber();
-        $dispatcher->addSubscriber($listener);
-
-        return new Workflow($definition, $marking, $dispatcher);
+        return new Workflow($definition, $marking);
     }
 
 }

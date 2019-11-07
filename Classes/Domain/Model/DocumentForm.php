@@ -37,12 +37,6 @@ class DocumentForm extends AbstractFormElement
 
     /**
      *
-     * @var string
-     */
-    protected $qucosaUrn;
-
-    /**
-     *
      * @var \EWW\Dpf\Domain\Model\File
      */
     protected $primaryFile;
@@ -82,6 +76,11 @@ class DocumentForm extends AbstractFormElement
      * @var string
      */
     protected $processNumber;
+
+    /**
+     * @var bool
+     */
+    protected $temporary;
 
     /**
      * @var string
@@ -140,24 +139,6 @@ class DocumentForm extends AbstractFormElement
     public function setQucosaId($qucosaId)
     {
         $this->qucosaId = $qucosaId;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getQucosaUrn()
-    {
-        return $this->qucosaUrn;
-    }
-
-    /**
-     *
-     * @param string $qucosaUrn
-     */
-    public function setQucosaUrn($qucosaUrn)
-    {
-        $this->qucosaUrn = $qucosaUrn;
     }
 
     /**
@@ -245,6 +226,25 @@ class DocumentForm extends AbstractFormElement
     public function setProcessNumber($processNumber)
     {
         $this->processNumber = $processNumber;
+    }
+
+    /**
+     * Getss the temporary
+     *
+     * @return bool
+     */
+    public function getTemporary()
+    {
+        return $this->temporary;
+    }
+
+    /**
+     * Sets the temporary
+     * @param bool $temporary
+     */
+    public function setTemporary($temporary)
+    {
+        $this->temporary = $temporary;
     }
 
     /**

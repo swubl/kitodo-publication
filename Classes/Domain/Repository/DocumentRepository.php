@@ -50,20 +50,16 @@ class DocumentRepository extends \EWW\Dpf\Domain\Repository\AbstractRepository
             )
         );
 
+        $constraintsAnd[] = $query->logicalOr($constraintsOr);
+
         if ($stateFilters) {
-            $query->matching(
-                $query->logicalAnd(
-                    $query->logicalOr($constraintsOr),
-                    $query->in('state', $stateFilters),
-                    $query->equals('suggestion', false)
-                )
-            );
-        } else {
-            $query->matching(
-                $query->logicalOr($constraintsOr),
-                $query->equals('suggestion', false)
-            );
+            $constraintsAnd[] = $query->in('state', $stateFilters);
         }
+        
+        $constraintsAnd[] = $query->equals('suggestion', false)
+
+        $constraintsAnd[] = $query->equals('temporary', FALSE);
+        $query->matching($query->logicalAnd($constraintsAnd));
 
         $query->setOrderings(
             array('transfer_date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING)
@@ -118,6 +114,7 @@ class DocumentRepository extends \EWW\Dpf\Domain\Repository\AbstractRepository
             $constraintsAnd[] = $query->in('state', $stateFilters);
         }
 
+        $constraintsAnd[] = $query->equals('temporary', FALSE);
         $query->matching($query->logicalAnd($constraintsAnd));
 
         $query->setOrderings(
@@ -127,10 +124,12 @@ class DocumentRepository extends \EWW\Dpf\Domain\Repository\AbstractRepository
         return $query->execute();
     }
 
-
-    public function getObjectIdentifiers()
+    /**
+     * @param boolean $temporary
+     * @return array
+     */
+    public function getObjectIdentifiers($temporary = FALSE)
     {
-
         $query = $this->createQuery();
 
         $constraints = array(
@@ -138,6 +137,7 @@ class DocumentRepository extends \EWW\Dpf\Domain\Repository\AbstractRepository
             $query->logicalNot($query->equals('object_identifier', NULL)));
 
         if (count($constraints)) {
+            $constraints[] = $query->equals('temporary', $temporary);
             $query->matching($query->logicalAnd($constraints));
         }
 
@@ -168,8 +168,65 @@ class DocumentRepository extends \EWW\Dpf\Domain\Repository\AbstractRepository
         $constraints[] =  $query->equals('process_number', NULL);
 
         if (count($constraints)) {
-            $query->matching($query->logicalOr($constraints));
+            $query->matching(
+                $query->logicalAnd(
+                    $query->equals('temporary', FALSE),
+                    $query->logicalOr($constraints)
+                )
+            );
         }
+
+        return $query->execute();
+    }
+
+    /**
+     * Finds all outdated temporary documents,
+     *
+     * @param integer $timeout
+     * @return array The found Document Objects
+     */
+    public function findOutdatedTemporaryDocuments($timeout = 3600)
+    {
+        $query = $this->createQuery();
+
+        $dateTimeObj= new \DateTime();
+        $dateTimeObj->sub(new \DateInterval("PT".$timeout."S"));
+
+        $constraints = array();
+        $constraints[] = $query->lessThan('tstamp', $dateTimeObj->getTimestamp());
+
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('temporary', TRUE),
+                $query->logicalOr($constraints)
+            )
+        );
+
+        return $query->execute();
+    }
+
+    /**
+     * Finds all outdated locked documents,
+     *
+     * @param integer $timeout
+     * @return array The found Document Objects
+     */
+    public function findOutdatedLockedDocuments($timeout = 3600)
+    {
+        $query = $this->createQuery();
+
+        $dateTimeObj= new \DateTime();
+        $dateTimeObj->sub(new \DateInterval("PT".$timeout."S"));
+
+        $constraints = array();
+        $constraints[] = $query->lessThan('tstamp', $dateTimeObj->getTimestamp());
+
+        $query->matching(
+            $query->logicalAnd(
+                $query->logicalNot($query->equals('editor_uid', 0)),
+                $query->logicalOr($constraints)
+            )
+        );
 
         return $query->execute();
     }

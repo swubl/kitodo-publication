@@ -45,6 +45,14 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
      */
     protected $clientRepository = null;
 
+    /**
+     * persistence manager
+     *
+     * @var \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
+     * @inject
+     */
+    protected $persistenceManager;
+
     const RESULT_COUNT      = 50;
     const NEXT_RESULT_COUNT = 50;
 
@@ -55,13 +63,13 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
      */
     public function listAction()
     {
-        $objectIdentifiers = $this->documentRepository->getObjectIdentifiers();
-
-        $args          = $this->request->getArguments();
+        $workingCopies['noneTemporary'] = $this->documentRepository->getObjectIdentifiers(FALSE);
+        $workingCopies['temporary'] = $this->documentRepository->getObjectIdentifiers(TRUE);
+        $this->view->assign('workingCopies', $workingCopies);
 
         // assign result list from elastic search
+        $args = $this->request->getArguments();
         $this->view->assign('searchList', $args['results']);
-        $this->view->assign('alreadyImported', $objectIdentifiers);
         $this->view->assign('resultCount', self::RESULT_COUNT);
         $this->view->assign('query', $args['query']);
     }
@@ -241,13 +249,67 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
     }
 
     /**
+     * action importForEditingAction
+     *
+     * @param  string $documentObjectIdentifier
+     * @return void
+     */
+    public function importForEditingAction($documentObjectIdentifier)
+    {
+        $this->setSessionData('redirectToDocumentListAction', 'search');
+        $this->setSessionData('redirectToDocumentListController', 'Search');
+
+        /** @var \EWW\Dpf\Services\Transfer\DocumentTransferManager $documentTransferManager */
+        $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
+
+        /** @var  \EWW\Dpf\Services\Transfer\FedoraRepository $remoteRepository */
+        $remoteRepository = $this->objectManager->get(FedoraRepository::class);
+
+        $documentTransferManager->setRemoteRepository($remoteRepository);
+
+        /** @var \EWW\Dpf\Domain\Model\Document $document */
+        $document = NULL;
+
+        if ($documentObjectIdentifier) {
+            $document = $documentTransferManager->retrieve($documentObjectIdentifier, $this->security->getUser()->getUid());
+
+            if ($document) {
+                $this->redirect('showDetails', 'Document', null, ['document' => $document]);
+            }
+        }
+
+        $this->redirect('search');
+    }
+
+
+    /**
+     * action showDetailsAction
+     *
+     * @param  string $documentObjectIdentifier
+     * @return void
+     */
+    public function showDetailsAction($documentObjectIdentifier)
+    {
+        if ($documentObjectIdentifier) {
+            /** @var  \EWW\Dpf\Domain\Model\Document $document */
+            $document = $this->documentRepository->findOneByObjectIdentifier($documentObjectIdentifier);
+
+            if (!$document->getTemporary()) {
+                $this->redirect('showDetails', 'Document', null, ['document'=>$document]);
+            }
+        }
+
+        $this->redirect('search');
+    }
+
+
+    /**
      * action import
      *
      * @param  string $documentObjectIdentifier
-     * @param  string $objectState
      * @return void
      */
-    public function importAction($documentObjectIdentifier, $objectState)
+    public function importAction($documentObjectIdentifier)
     {
         $documentTransferManager = $this->objectManager->get(DocumentTransferManager::class);
         $remoteRepository        = $this->objectManager->get(FedoraRepository::class);
@@ -419,13 +481,6 @@ class SearchController extends \EWW\Dpf\Controller\AbstractSearchController
     public function initializeAction()
     {
         parent::initializeAction();
-
-        $document = NULL;
-        if ($this->request->hasArgument('document')) {
-            $documentUid = $this->request->getArgument('document');
-            $document = $this->documentRepository->findByUid($documentUid);
-        }
     }
-
 
 }
