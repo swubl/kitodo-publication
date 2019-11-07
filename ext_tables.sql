@@ -83,7 +83,6 @@ CREATE TABLE tx_dpf_domain_model_document (
   owner int(11) unsigned default '0' NOT NULL,
   editor_uid int(11) unsigned default '0' NOT NULL,
   temporary tinyint(1) unsigned DEFAULT '0' NOT NULL,
-  owner int(11) unsigned default '0',
   suggestion tinyint(1) unsigned DEFAULT '0' NOT NULL,
   linked_uid int(11) unsigned DEFAULT '0' NOT NULL,
   comment varchar(1024) DEFAULT '' NOT NULL,
