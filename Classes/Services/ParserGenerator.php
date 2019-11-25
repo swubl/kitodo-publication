@@ -20,9 +20,9 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 use EWW\Dpf\Services\Transformer\DocumentTransformer;
 
 /**
- * MetsExporter
+ * ParserGenerator
  */
-class MetsExporter
+class ParserGenerator
 {
     /**
      * clientConfigurationManager
@@ -223,14 +223,14 @@ class MetsExporter
                         $newGroupFlag = false;
                     }
 
-                    $xml = $this->customXPath($path, $newGroupFlag, $value['value']);
+                    $this->customXPath($path, $newGroupFlag, $value['value']);
                     $i++;
 
                 }
             } else {
                 if (!empty($attributeXPath)) {
                     $path = $mapping . $attributeXPath;
-                    $xml  = $this->customXPath($path, true, '', true);
+                    $this->customXPath($path, true, '', true);
                 }
             }
         }
@@ -319,7 +319,7 @@ class MetsExporter
                     $xml = $this->parseXPath($newPath[1]);
 
                 }
-                
+
                 $docXML = new \DOMDocument();
                 $docXML->loadXML($xml);
 

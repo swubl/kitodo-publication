@@ -94,7 +94,7 @@ class DocumentTransferManager
         $document->setTransferStatus(Document::TRANSFER_QUEUED);
         $this->documentRepository->update($document);
 
-        $exporter = new \EWW\Dpf\Services\MetsExporter();
+        $exporter = new \EWW\Dpf\Services\ParserGenerator();
 
         $exporter->setFileData($document->getFileData());
 
@@ -152,7 +152,7 @@ class DocumentTransferManager
         $document->setTransferStatus(Document::TRANSFER_QUEUED);
         $this->documentRepository->update($document);
 
-        $exporter = new \EWW\Dpf\Services\MetsExporter();
+        $exporter = new \EWW\Dpf\Services\ParserGenerator();
 
         $fileData = $document->getFileData();
 
@@ -200,7 +200,7 @@ class DocumentTransferManager
 
         if ($remoteXml) {
 
-            $exporter = new \EWW\Dpf\Services\MetsExporter();
+            $exporter = new \EWW\Dpf\Services\ParserGenerator();
             $inputTransformedXML = $exporter->transformInputXML($remoteXml);
 
             $internalFormat = new \EWW\Dpf\Helper\InternalFormat($inputTransformedXML);

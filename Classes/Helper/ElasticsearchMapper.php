@@ -51,7 +51,7 @@ class ElasticsearchMapper
 
         $xsl->load($xsltDoc);
 
-        $exporter = new \EWW\Dpf\Services\MetsExporter();
+        $exporter = new \EWW\Dpf\Services\ParserGenerator();
         $fileData = $document->getFileData();
         $exporter->setFileData($fileData);
 
