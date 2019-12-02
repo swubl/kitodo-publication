@@ -59,11 +59,11 @@
 		</trans-unit>
 		<trans-unit id="documentForm.edit.header" approved="yes">
 			<source>Edit %s</source>
-			<target>% bearbeiten</target>
+			<target>%s bearbeiten</target>
 		</trans-unit>
 		<trans-unit id="documentForm.goBack" approved="yes">
 			<source>go back</source>
-			<target>zurück</target>
+			<target>Zurück</target>
 		</trans-unit>
 		<trans-unit id="documentForm.new.header" approved="yes">
 			<source>New %s</source>
@@ -119,7 +119,7 @@
 		</trans-unit>
 		<trans-unit id="document_inactivate.failure" approved="yes">
 			<source>Inactivating %s failed.</source>
-			<target>Aktivierung von %s fehlgeschlagen.</target>
+			<target>Deaktivierung von %s fehlgeschlagen.</target>
 		</trans-unit>
 		<trans-unit id="document_inactivate.success" approved="yes">
 			<source>%s successfully inactivated.</source>
@@ -151,7 +151,7 @@
 		</trans-unit>
 		<trans-unit id="document_deleteLocally.success">
 			<source>%s successfully deleted.</source>
-		    <target>%s erfolgreich gelöscht.</target>
+		   	<target>%s erfolgreich gelöscht.</target>
 		</trans-unit>
 		<trans-unit id="document_updateLocally.accessDenied" approved="yes">
 			<source>Saving %s failed, access denied.</source>
@@ -159,7 +159,7 @@
 		</trans-unit>
 		<trans-unit id="document_updateLocally.failureCreateWorkingCopy" approved="yes">
 			<source>Saving %s failed, there is already a working copy.</source>
-			<target>Speicherung von %s fehlgeschlagen, es existiert bereits Arbeitspopie.</target>
+			<target>Speicherung von %s fehlgeschlagen, es existiert bereits Arbeitskopie.</target>
 		</trans-unit>
 		<trans-unit id="document_updateLocally.failureNewVersion" approved="yes">
 			<source>Saving %s failed. There is a newer Version.</source>
@@ -171,7 +171,7 @@
 		</trans-unit>
 		<trans-unit id="document_edit.failureBlocked" approved="yes">
 			<source>%s is already being edited.</source>
-		    <target>%s wird bereits bearbeitet.</target>
+		   	<target>%s wird bereits bearbeitet.</target>
 		</trans-unit>
 		<trans-unit id="document_edit.accessDenied" approved="yes">
 			<source>Can not edit %s, access denied.</source>
@@ -228,14 +228,6 @@
 		<trans-unit id="document_duplicate.accessDenied" approved="yes">
 			<source>%s could not be duplicated, access denied.</source>
 			<target>%s konnte nicht dupliziert werden, der Zugriff wurde verweigert.</target>
-		</trans-unit>
-		<trans-unit id="document_inactivate.failure" approved="yes">
-			<source>Inactivating %s failed.</source>
-			<target>Deaktivierung von %s fehlgeschlagen.</target>
-		</trans-unit>
-		<trans-unit id="document_inactivate.success" approved="yes">
-			<source>%s successfully inactivated.</source>
-			<target>%s erfolgreich deaktiviert.</target>
 		</trans-unit>
 		<trans-unit id="document_ingest.failure" approved="yes">
 			<source>Releasing %s failed.</source>
@@ -407,7 +399,7 @@
 		</trans-unit>
         <trans-unit id="form_button.nextPage">
             <source>next</source>
-            <target>Nächste </target>
+            <target>Nächste</target>
         </trans-unit>
         <trans-unit id="form_button.prevPage">
             <source>previous</source>
@@ -455,7 +447,7 @@
 		</trans-unit>
 		<trans-unit id="manager.activate" approved="yes">
 			<source>activate</source>
-			<target>aktivieren</target>
+			<target>Aktivieren</target>
 		</trans-unit>
 		<trans-unit id="manager.confirmActivate.message" approved="yes">
 			<source>The document &quot;%s&quot; will be marked as active in the repository.</source>
@@ -503,15 +495,15 @@
 		</trans-unit>
         <trans-unit id="manager.confirm.no" approved="yes">
             <source>cancel</source>
-            <target>abbrechen</target>
+            <target>Abbrechen</target>
         </trans-unit>
         <trans-unit id="manager.confirm.yes" approved="yes">
             <source>continue</source>
-            <target>fortsetzen</target>
+            <target>Fortsetzen</target>
         </trans-unit>
 		<trans-unit id="manager.delete" approved="yes">
 			<source>delete</source>
-			<target>löschen</target>
+			<target>Löschen</target>
 		</trans-unit>
 		<trans-unit id="manager.confirmDelete.message" approved="yes" xml:space="preserve">
 			<source>The document &quot;%s&quot; will be removed from the local list and therefore all changes are rejected. Documents in the repository remain unchanged.</source>
@@ -523,7 +515,7 @@
 		</trans-unit>
 		<trans-unit id="manager.deleteLocally" approved="yes">
 			<source>delete</source>
-			<target>löschen</target>
+			<target>Löschen</target>
 		</trans-unit>
 		<trans-unit id="manager.confirmDeleteLocally.message" approved="yes" xml:space="preserve">
 			<source>The document &quot;%s&quot; will be deleted completely. This cannot be undone.</source>
@@ -659,7 +651,7 @@
 		</trans-unit>
 		<trans-unit id="manager.inactivate" approved="yes">
 			<source>inactivate</source>
-			<target>inaktiv</target>
+			<target>Deaktivieren</target>
 		</trans-unit>
 		<trans-unit id="manager.confirmInactivate.message" approved="yes">
 			<source>The document &quot;%s&quot; will be marked as inactive in the repository.</source>
@@ -719,7 +711,7 @@
 		</trans-unit>
 		<trans-unit id="manager.tooltip.uploadFiles" approved="yes">
 			<source>Upload Full texts / media</source>
-			<target>Volltexte / Medien hochladen</target>
+			<target>Volltexte/Medien hochladen</target>
 		</trans-unit>
 		<trans-unit id="manager.releaseUpdate" approved="yes">
 			<source>update</source>
@@ -839,7 +831,7 @@ Date: ###DATE###
 		</trans-unit>
 		<trans-unit id="search.doubletCheck.foundMessage" approved="yes">
 			<source>The following possible duplicates were found:</source>
-			<target>Folgende mögliche doubletten wurden gefunden:</target>
+			<target>Folgende mögliche Dubletten wurden gefunden:</target>
 		</trans-unit>
 		<trans-unit id="search.doubletCheck.identifier" approved="yes">
 			<source>URN</source>
@@ -847,7 +839,7 @@ Date: ###DATE###
 		</trans-unit>
 		<trans-unit id="search.doubletCheck.nothingFoundMessage" approved="yes">
 			<source>There were no potential duplicates found.</source>
-			<target>Es wurden keine möglichen Doubletten gefunden.</target>
+			<target>Es wurden keine möglichen Dubletten gefunden.</target>
 		</trans-unit>
 		<trans-unit id="search.doubletCheck.publicationDate" approved="yes">
 			<source>Publication Date</source>
@@ -1090,8 +1082,8 @@ Date: ###DATE###
 			<target>Suchergebnisse nach Einreicher filtern</target>
 		</trans-unit>
 		<trans-unit id="tx_dpf_domain_model_document.xml_data" approved="yes">
-			<source>Xml Data</source>
-			<target>Xml Daten</target>
+			<source>XML Data</source>
+			<target>XML Daten</target>
 		</trans-unit>
 		<trans-unit id="tx_dpf_domain_model_documenttype.display_name" approved="yes">
 			<source>Display Name</source>
